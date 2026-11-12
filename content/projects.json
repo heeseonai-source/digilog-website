@@ -1,16 +1,52 @@
 {
   "hero": {
     "title": "직접 만들고, 현장에서 가르칩니다",
-    "lead": "대표 프로젝트와 출강 이력, 강의 현장 이야기를 한곳에 모았습니다."
+    "lead": "강의 현장 사진과 출강 이력, 현장 이야기를 한곳에 모았습니다."
   },
-  "featured": {
-    "eyebrow": "대표 프로젝트 · 오늘두AI × 디지로그쌤",
-    "title": "「왕초탈 챗GPT」\n혼자 해내는 첫걸음",
-    "lead": "AI 입문자를 위한 온라인 녹화 수업. 10분 × 5강, 프롬프트 자료집과 실습 미션을 함께 제공합니다.",
-    "image": "/assets/wangchotal.webp",
-    "imageAlt": "노희선 강사와 「왕초탈 챗GPT」 제목이 함께 있는 강의 홍보 이미지",
-    "lessons": "가입하고 첫 질문을 던진 뒤 생활 메모를 정리합니다.\n후속 질문으로 답변을 짧고 쉽게 다듬습니다.\n챗GPT·제미나이·클로드를 비교하고 무료·유료 기준을 정합니다.\n역할·상대·내용·형식으로 안내문을 만듭니다.\n중요한 정보를 확인하고 개인정보와 맞춤 지침을 점검합니다.",
-    "button": "우리 기관에 도입 문의"
+  "gallery": {
+    "title": "사진으로 보는 강의 현장",
+    "items": [
+      {
+        "src": "/assets/field/gyeongnam-2-practice.jpg",
+        "title": "수강생 옆자리에서 함께 화면 보기",
+        "tag": "경남대 소상공인 2학기"
+      },
+      {
+        "src": "/assets/field/massage-assoc-hall.jpg",
+        "title": "300명이 함께한 연수회 실습",
+        "tag": "대한안마사협회 연수회"
+      },
+      {
+        "src": "/assets/field/my-ai-lab.jpg",
+        "title": "팀의 이야기를 듣는 멘토링",
+        "tag": "마이 AI랩"
+      },
+      {
+        "src": "/assets/field/gyeongnam-3.jpg",
+        "title": "온라인 판로를 여는 3학기 수업",
+        "tag": "경남대 소상공인 3학기"
+      },
+      {
+        "src": "/assets/field/miryang.jpg",
+        "title": "어르신 AI행정교실을 마치고",
+        "tag": "밀양 AI행정교실"
+      },
+      {
+        "src": "/assets/field/gyeongnam-2.jpg",
+        "title": "AI로 블로그 자동화 배우기",
+        "tag": "경남대 소상공인 2학기"
+      },
+      {
+        "src": "/assets/field/my-ai-lab-hall.jpg",
+        "title": "대학생 팀 멘토링 현장",
+        "tag": "마이 AI랩"
+      },
+      {
+        "src": "/assets/field/massage-assoc.png",
+        "title": "음성으로 대화하는 AI, 제미나이 라이브",
+        "tag": "대한안마사협회 연수회"
+      }
+    ]
   },
   "history": {
     "title": "출강 이력",
@@ -134,51 +170,6 @@
         "desc": "진성초(진주) · 웅동초(창원)",
         "status": "done",
         "type": "kids"
-      }
-    ]
-  },
-  "gallery": {
-    "title": "사진으로 보는 강의 현장",
-    "items": [
-      {
-        "src": "/assets/field/gyeongnam-2-practice.jpg",
-        "title": "수강생 옆자리에서 함께 화면 보기",
-        "tag": "경남대 소상공인 2학기"
-      },
-      {
-        "src": "/assets/field/massage-assoc-hall.jpg",
-        "title": "300명이 함께한 연수회 실습",
-        "tag": "대한안마사협회 연수회"
-      },
-      {
-        "src": "/assets/field/my-ai-lab.jpg",
-        "title": "팀의 이야기를 듣는 멘토링",
-        "tag": "마이 AI랩"
-      },
-      {
-        "src": "/assets/field/gyeongnam-3.jpg",
-        "title": "온라인 판로를 여는 3학기 수업",
-        "tag": "경남대 소상공인 3학기"
-      },
-      {
-        "src": "/assets/field/miryang.jpg",
-        "title": "어르신 AI행정교실을 마치고",
-        "tag": "밀양 AI행정교실"
-      },
-      {
-        "src": "/assets/field/gyeongnam-2.jpg",
-        "title": "AI로 블로그 자동화 배우기",
-        "tag": "경남대 소상공인 2학기"
-      },
-      {
-        "src": "/assets/field/my-ai-lab-hall.jpg",
-        "title": "대학생 팀 멘토링 현장",
-        "tag": "마이 AI랩"
-      },
-      {
-        "src": "/assets/field/massage-assoc.png",
-        "title": "음성으로 대화하는 AI, 제미나이 라이브",
-        "tag": "대한안마사협회 연수회"
       }
     ]
   },

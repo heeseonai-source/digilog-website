@@ -185,18 +185,8 @@ const gallerySection = g => `<section class="gallery" id="gallery" aria-labelled
 </section>`;
 
 function projects(p) {
-  const f = p.featured;
   return `${pageHero('프로젝트 · 출강 이력', p.hero)}
-<section class="section"><div class="wrap feature">
-  <img src="${esc(f.image)}" width="1672" height="940" alt="${esc(f.imageAlt)}" loading="lazy">
-  <div>
-    <span class="eyebrow">${esc(f.eyebrow)}</span>
-    <h2 class="section-title">${rich(f.title)}</h2>
-    <p class="section-lead">${rich(f.lead)}</p>
-    <ol class="lesson-list">${lines(f.lessons).map((x, i) => `<li><b>${i + 1}강</b>${esc(x)}</li>`).join('')}</ol>
-    <a class="btn btn-primary" href="/contact?topic=${encodeURIComponent(plain(f.title).split('\n')[0].replace(/[「」]/g, ''))}">${esc(f.button)}</a>
-  </div>
-</div></section>
+${gallerySection(p.gallery)}
 <section class="section alt"><div class="wrap">
   <div class="section-head"><span class="eyebrow">출강 이력</span><h2 class="section-title">${rich(p.history.title)}</h2><p class="section-lead">${rich(p.history.lead)}</p></div>
   <div class="filter" data-filter role="group" aria-label="대상별 보기">
@@ -206,7 +196,6 @@ ${HISTORY_TYPES.map(([v, l], i) => `    <button type="button" aria-pressed="${i 
 ${p.history.items.map(it => { const [label, cls] = STATUS[it.status] || STATUS.done; return `    <li data-type="${esc(it.type)}"><span class="date">${esc(it.date)}</span><div><h3>${esc(it.title)}</h3><p>${esc(it.desc)}</p></div><div class="side"><span class="tag${cls}">${label}</span></div></li>`; }).join('\n')}
   </ul>
 </div></section>
-${gallerySection(p.gallery)}
 <section class="section" id="stories">
   <div class="wrap section-head"><span class="eyebrow">현장 이야기</span><h2 class="section-title">${rich(p.cards.title)}</h2></div>
   <div class="wrap grid grid-3">
@@ -291,7 +280,7 @@ function build({ clean = true } = {}) {
     index: layout(site, { key: 'home', body: home(site, h, l, p) }),
     about: layout(site, { key: 'about', title: '소개', description: `${site.role} ${site.person}(${site.name})의 경력, 자격, 수업 철학.`, body: about(a) }),
     lectures: layout(site, { key: 'lectures', title: '강의 분야', description: l.courses.map(x => x.title).join(', ') + '. 대상별 맞춤 AI 실습 강의.', body: lectures(l) }),
-    projects: layout(site, { key: 'projects', title: '프로젝트·출강 이력', description: plain(p.featured.title).replace(/\n/g, ' ') + ', 출강 이력과 강의 현장 이야기.', body: projects(p) }),
+    projects: layout(site, { key: 'projects', title: '프로젝트·출강 이력', description: '생성형 AI 강의 현장 사진, 출강 이력과 강의 현장 이야기.', body: projects(p) }),
     reviews: layout(site, { key: 'reviews', title: '수강생 후기', description: plain(r.hero.lead), body: reviews(r) }),
     materials: layout(site, { key: 'materials', title: '수업자료실', description: '수강생을 위한 자료실. 수업에서 안내받은 비밀번호로 자료를 받을 수 있습니다.', body: materials(m), noindex: true }),
     contact: layout(site, { key: 'contact', title: '강의 문의', description: '기관·단체 생성형 AI 강의, 연수, 멘토링, 콘텐츠 협업 문의.', body: contact(site, c) }),

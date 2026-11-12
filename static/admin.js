@@ -40,9 +40,8 @@ const SCHEMA = {
   ] },
   projects: { label: '프로젝트·이력·현장', view: '/projects', notice: '출강 기록은 <b>위에 있을수록 먼저</b> 보여요. 새 출강은 「+ 기록 추가」 후 ↑ 버튼으로 맨 위로 올리세요. 끝나면 상태를 「출강 완료」로 바꿔 주세요.', fields: [
     HERO,
-    G('featured', '대표 프로젝트', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), IMG('image', '대표 이미지'), T('imageAlt', '이미지 설명'), A('lessons', '커리큘럼', '한 줄에 한 강씩 (1강, 2강… 번호는 자동)'), T('button', '버튼 글자')]),
+    G('gallery', '현장 갤러리 (맨 위 움직이는 사진)', [T('title', '제목'), L('items', '사진', [IMG('src', '사진'), T('title', '사진 설명'), T('tag', '장소·과정')], '사진')]),
     G('history', '출강 이력', [T('title', '제목'), R('lead', '설명'), L('items', '출강 기록', [T('title', '기관·과정 이름'), T('date', '기간 (예: 2026.08–09)'), A('desc', '강좌명·내용'), SEL('status', '상태', STATUSES), SEL('type', '분류 (필터)', TYPES)], '기록')]),
-    G('gallery', '현장 갤러리 (움직이는 사진)', [T('title', '제목'), L('items', '사진', [IMG('src', '사진'), T('title', '사진 설명'), T('tag', '장소·과정')], '사진')]),
     G('cards', '현장 이야기 카드', [T('title', '제목'), L('items', '카드', [IMG('image', '사진'), T('imageAlt', '사진 설명 (검색·음성 안내용)'), T('tag', '꼬리표 (예: 소상공인 · 2026.10)'), SEL('color', '꼬리표 색', COLORS), T('title', '제목'), A('text', '내용'), T('link', '블로그 후기 주소')], '카드')]),
     G('blog', '블로그 자동 목록', [T('title', '제목'), R('lead', '설명')]),
     CTA,
