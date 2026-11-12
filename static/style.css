@@ -177,6 +177,14 @@ a.course-card:hover{transform:translateY(-4px)}
 .filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
 .filter button{border:1px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;color:var(--ink)}
 .filter button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.filter{scroll-margin-top:90px}
+.pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin-top:24px}
+.pager[hidden]{display:none}
+.pager button{min-width:42px;height:42px;padding:0 12px;border:1px solid var(--line);background:#fff;border-radius:12px;font:inherit;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer}
+.pager button:hover:not(:disabled){border-color:var(--ink)}
+.pager button[aria-current="page"]{background:var(--coral);border-color:var(--coral);color:#fff}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager-info{flex-basis:100%;text-align:center;color:var(--muted);font-size:14px;margin-top:4px}
 
 /* ---------- 후기 ---------- */
 .review-card{padding:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:transform .2s}

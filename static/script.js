@@ -112,16 +112,46 @@ if (galleryEl && GALLERY.length) {
   lb.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
 }
 
-/* ---------- 출강 이력 필터 ---------- */
+/* ---------- 출강 이력 필터 + 페이지 나누기 (한 페이지 5개) ---------- */
 const filter = document.querySelector('[data-filter]');
-if (filter) {
-  const items = document.querySelectorAll('.history li');
-  filter.addEventListener('click', e => {
+const historyList = document.querySelector('.history');
+if (historyList) {
+  const PER_PAGE = 5;
+  const items = [...historyList.querySelectorAll('li')];
+  const pager = document.createElement('nav');
+  pager.className = 'pager';
+  pager.setAttribute('aria-label', '출강 이력 페이지');
+  historyList.after(pager);
+  let type = 'all', page = 1;
+
+  const render = (scroll) => {
+    const matched = items.filter(li => type === 'all' || li.dataset.type.split(' ').includes(type));
+    const pages = Math.max(1, Math.ceil(matched.length / PER_PAGE));
+    page = Math.min(Math.max(1, page), pages);
+    items.forEach(li => { li.hidden = true; });
+    matched.slice((page - 1) * PER_PAGE, page * PER_PAGE).forEach(li => { li.hidden = false; });
+    if (pages === 1) { pager.innerHTML = ''; pager.hidden = true; }
+    else {
+      pager.hidden = false;
+      const btn = (p, label, aria, disabled) => `<button type="button" data-page="${p}"${aria ? ` aria-label="${aria}"` : ''}${p === page && !aria ? ' aria-current="page"' : ''}${disabled ? ' disabled' : ''}>${label}</button>`;
+      pager.innerHTML = btn(page - 1, '‹', '이전 페이지', page === 1) +
+        Array.from({ length: pages }, (_, i) => btn(i + 1, i + 1)).join('') +
+        btn(page + 1, '›', '다음 페이지', page === pages) +
+        `<span class="pager-info">${matched.length}건 중 ${(page - 1) * PER_PAGE + 1}–${Math.min(page * PER_PAGE, matched.length)}</span>`;
+    }
+    if (scroll) (filter || historyList).scrollIntoView({ block: 'start', behavior: 'smooth' });
+  };
+
+  pager.addEventListener('click', e => {
+    const b = e.target.closest('button[data-page]'); if (!b || b.disabled) return;
+    page = Number(b.dataset.page); render(true);
+  });
+  filter?.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     filter.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    const v = b.dataset.value;
-    items.forEach(li => { li.hidden = v !== 'all' && !li.dataset.type.split(' ').includes(v); });
+    type = b.dataset.value; page = 1; render(false);
   });
+  render(false);
 }
 
 /* ---------- 수업자료 (수업별 비밀번호) ---------- */
