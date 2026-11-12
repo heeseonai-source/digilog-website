@@ -107,7 +107,7 @@ ${lec.courses.map((c, i) => `    <a class="card course-card reveal" href="/lectu
 </div></section>
 
 <section class="section"><div class="wrap">
-  <div class="section-head split"><div><span class="eyebrow">최근 출강</span><h2 class="section-title">${rich(h.recent.title)}</h2><p class="section-lead">${rich(h.recent.lead)}</p></div><a class="text-link" href="/reviews">강의후기 전체 보기 →</a></div>
+  <div class="section-head split"><div><span class="eyebrow">최근 출강</span><h2 class="section-title">${rich(h.recent.title)}</h2><p class="section-lead">${rich(h.recent.lead)}</p></div><a class="text-link" href="/projects#stories">현장 이야기 전체 보기 →</a></div>
   <div class="grid grid-3">
 ${rev.cards.items.slice(0, 3).map(reviewCard).join('\n')}
   </div>
@@ -166,7 +166,24 @@ ${l.format.rows.map(r => `    <tr><th scope="row">${esc(r.label)}</th><td>${rich
 ${cta(l.cta, '/contact', true)}`;
 }
 
-const HISTORY_TYPES = [['all', '전체'], ['biz', '소상공인'], ['public', '공공·연수'], ['univ', '대학·청년'], ['senior', '시니어·시민']];
+const HISTORY_TYPES = [['all', '전체'], ['biz', '소상공인'], ['public', '공공·연수'], ['univ', '대학·청년'], ['senior', '시니어·시민'], ['kids', '초등·아동']];
+const STATUS = { done: ['출강 완료', ''], ongoing: ['출강 중', ' coral'], upcoming: ['출강 예정', ' sky'] };
+
+const gallerySection = g => `<section class="gallery" id="gallery" aria-labelledby="gallery-title">
+  <div class="wrap gallery-head">
+    <div><span class="eyebrow">현장 갤러리</span><h2 class="section-title" id="gallery-title">${rich(g.title)}</h2></div>
+    <p class="gallery-tip">사진을 누르면 크게 볼 수 있어요.</p>
+  </div>
+  <div id="field-gallery"></div>
+  <script type="application/json" id="gallery-data">${JSON.stringify(g.items).replace(/</g, '\\u003c')}</script>
+  <dialog class="lightbox" id="lightbox" aria-labelledby="lb-title">
+    <button class="lb-close" type="button" aria-label="닫기">✕</button>
+    <figure><img src="" alt=""><figcaption><span class="tag coral" id="lb-tag"></span><strong id="lb-title"></strong></figcaption></figure>
+    <button class="lb-nav prev" type="button" aria-label="이전 사진">‹</button>
+    <button class="lb-nav next" type="button" aria-label="다음 사진">›</button>
+  </dialog>
+</section>`;
+
 function projects(p) {
   const f = p.featured;
   return `${pageHero('프로젝트 · 출강 이력', p.hero)}
@@ -186,38 +203,32 @@ function projects(p) {
 ${HISTORY_TYPES.map(([v, l], i) => `    <button type="button" aria-pressed="${i === 0}" data-value="${v}">${l}</button>`).join('\n')}
   </div>
   <ul class="history">
-${p.history.items.map(it => `    <li data-type="${esc(it.type)}"><span class="date">${esc(it.date)}</span><div><h3>${it.link ? `<a href="${esc(it.link)}"${linkAttrs(it.link)}>${esc(it.title)}</a>` : esc(it.title)}</h3><p>${esc(it.desc)}</p></div><div class="side"><span class="tag${/주강사/.test(it.role) ? ' coral' : /멘토/.test(it.role) ? ' sky' : ''}">${esc(it.role)}</span></div></li>`).join('\n')}
+${p.history.items.map(it => { const [label, cls] = STATUS[it.status] || STATUS.done; return `    <li data-type="${esc(it.type)}"><span class="date">${esc(it.date)}</span><div><h3>${esc(it.title)}</h3><p>${esc(it.desc)}</p></div><div class="side"><span class="tag${cls}">${label}</span></div></li>`; }).join('\n')}
   </ul>
+</div></section>
+${gallerySection(p.gallery)}
+<section class="section" id="stories">
+  <div class="wrap section-head"><span class="eyebrow">현장 이야기</span><h2 class="section-title">${rich(p.cards.title)}</h2></div>
+  <div class="wrap grid grid-3">
+${p.cards.items.map(reviewCard).join('\n')}
+  </div>
+</section>
+<section class="section alt"><div class="wrap">
+  <div class="section-head split"><div><span class="eyebrow">블로그 최신 출강 기록</span><h2 class="section-title">${rich(p.blog.title)}</h2><p class="section-lead">${rich(p.blog.lead)}</p></div><a class="text-link" href="https://blog.naver.com/heeseon_ai" target="_blank" rel="noopener">블로그에서 모두 보기 →</a></div>
+  <ul class="blog-list" data-blog data-limit="8" data-category="출강후기"></ul>
+  <p class="blog-status">최신 기록을 불러오는 중이에요…</p>
 </div></section>
 ${cta(p.cta, '/contact')}`;
 }
 
 function reviews(r) {
   return `${pageHero('강의후기', r.hero)}
-<section class="gallery" aria-labelledby="gallery-title">
-  <div class="wrap gallery-head">
-    <div><span class="eyebrow">현장 갤러리</span><h2 class="section-title" id="gallery-title">${rich(r.gallery.title)}</h2></div>
-    <p class="gallery-tip">사진을 누르면 크게 볼 수 있어요.</p>
+<section class="section"><div class="wrap">
+  <div class="card empty-state">
+    <span class="empty-icon" aria-hidden="true">💬</span>
+    <h2>${rich(r.empty.title)}</h2>
+    <p>${rich(r.empty.text)}</p>
   </div>
-  <div id="field-gallery"></div>
-  <script type="application/json" id="gallery-data">${JSON.stringify(r.gallery.items).replace(/</g, '\\u003c')}</script>
-  <dialog class="lightbox" id="lightbox" aria-labelledby="lb-title">
-    <button class="lb-close" type="button" aria-label="닫기">✕</button>
-    <figure><img src="" alt=""><figcaption><span class="tag coral" id="lb-tag"></span><strong id="lb-title"></strong><a class="text-link" id="lb-link" target="_blank" rel="noopener">블로그 후기 읽기 →</a></figcaption></figure>
-    <button class="lb-nav prev" type="button" aria-label="이전 사진">‹</button>
-    <button class="lb-nav next" type="button" aria-label="다음 사진">›</button>
-  </dialog>
-</section>
-<section class="section">
-  <div class="wrap section-head"><span class="eyebrow">출강후기</span><h2 class="section-title">${rich(r.cards.title)}</h2></div>
-  <div class="wrap grid grid-3">
-${r.cards.items.map(reviewCard).join('\n')}
-  </div>
-</section>
-<section class="section alt"><div class="wrap">
-  <div class="section-head split"><div><span class="eyebrow">블로그 최신 출강후기</span><h2 class="section-title">${rich(r.blog.title)}</h2><p class="section-lead">${rich(r.blog.lead)}</p></div><a class="text-link" href="https://blog.naver.com/heeseon_ai" target="_blank" rel="noopener">블로그에서 모두 보기 →</a></div>
-  <ul class="blog-list" data-blog data-limit="8" data-category="출강후기"></ul>
-  <p class="blog-status">최신 후기를 불러오는 중이에요…</p>
 </div></section>`;
 }
 
@@ -277,11 +288,11 @@ function build({ clean = true } = {}) {
   if (clean) fs.rmSync(OUT, { recursive: true, force: true });
   copyDir(path.join(ROOT, 'static'), OUT);
   const pages = {
-    index: layout(site, { key: 'home', body: home(site, h, l, r) }),
+    index: layout(site, { key: 'home', body: home(site, h, l, p) }),
     about: layout(site, { key: 'about', title: '소개', description: `${site.role} ${site.person}(${site.name})의 경력, 자격, 수업 철학.`, body: about(a) }),
     lectures: layout(site, { key: 'lectures', title: '강의 분야', description: l.courses.map(x => x.title).join(', ') + '. 대상별 맞춤 AI 실습 강의.', body: lectures(l) }),
-    projects: layout(site, { key: 'projects', title: '프로젝트·출강 이력', description: plain(p.featured.title).replace(/\n/g, ' ') + ' 및 출강 이력.', body: projects(p) }),
-    reviews: layout(site, { key: 'reviews', title: '강의후기', description: plain(r.hero.lead), body: reviews(r) }),
+    projects: layout(site, { key: 'projects', title: '프로젝트·출강 이력', description: plain(p.featured.title).replace(/\n/g, ' ') + ', 출강 이력과 강의 현장 이야기.', body: projects(p) }),
+    reviews: layout(site, { key: 'reviews', title: '수강생 후기', description: plain(r.hero.lead), body: reviews(r) }),
     materials: layout(site, { key: 'materials', title: '수업자료실', description: '수강생을 위한 자료실. 수업에서 안내받은 비밀번호로 자료를 받을 수 있습니다.', body: materials(m), noindex: true }),
     contact: layout(site, { key: 'contact', title: '강의 문의', description: '기관·단체 생성형 AI 강의, 연수, 멘토링, 콘텐츠 협업 문의.', body: contact(site, c) }),
   };

@@ -6,12 +6,12 @@
     "photo": "/assets/no-heeseon-profile.webp",
     "photoAlt": "웃으며 카메라를 바라보는 생성형 AI 강사 노희선",
     "badgeTop": "오늘두AI 소속 강사",
-    "badgeBottomNumber": "4종",
-    "badgeBottomText": "AI 강사 자격 보유"
+    "badgeBottomNumber": "5종",
+    "badgeBottomText": "강사 자격 보유"
   },
   "stats": [
     {
-      "value": "8곳+",
+      "value": "11곳",
       "label": "2026년 출강 기관"
     },
     {
@@ -23,8 +23,8 @@
       "label": "강의 분야"
     },
     {
-      "value": "4종",
-      "label": "AI 교육 자격"
+      "value": "5종",
+      "label": "강사 자격"
     }
   ],
   "method": {

@@ -234,6 +234,11 @@ a.course-card:hover{transform:translateY(-4px)}
 .lb-nav.next{right:-22px}
 @media (max-width:640px){.lb-nav.prev{left:6px}.lb-nav.next{right:6px}.lb-close{right:4px}}
 
+.empty-state{max-width:640px;margin-inline:auto;text-align:center;padding:56px 28px;border-style:dashed;box-shadow:none;background:#FFFDF8}
+.empty-state .empty-icon{font-size:44px;display:block;margin-bottom:12px}
+.empty-state h2{font-size:24px;margin-bottom:10px}
+.empty-state p{color:var(--muted)}
+
 /* ---------- 자료실 ---------- */
 .lock-card{max-width:600px;margin-inline:auto}
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}

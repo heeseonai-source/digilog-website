@@ -81,12 +81,11 @@ if (galleryEl && GALLERY.length) {
     lb.querySelector('img').alt = g.title;
     lb.querySelector('#lb-title').textContent = g.title;
     lb.querySelector('#lb-tag').textContent = g.tag;
-    lb.querySelector('#lb-link').href = g.link;
   };
   galleryEl.addEventListener('click', e => {
     const b = e.target.closest('.photo'); if (!b) return;
     show(Number(b.dataset.i));
-    if (lb.showModal) lb.showModal(); else window.open(GALLERY[cur].link, '_blank');
+    if (lb.showModal) lb.showModal(); else window.open(GALLERY[cur].src, '_blank');
   });
   lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
   lb.querySelector('.prev').addEventListener('click', () => show(cur - 1));

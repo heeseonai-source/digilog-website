@@ -2,7 +2,8 @@
 /* 디지로그쌤 관리자 화면 — 페이지별 입력 칸은 아래 SCHEMA 에서 정합니다. */
 
 const COLORS = [['sun', '노랑'], ['sky', '하늘'], ['mint', '민트'], ['coral', '코랄']];
-const TYPES = [['biz', '소상공인'], ['public', '공공·연수'], ['univ', '대학·청년'], ['senior', '시니어·시민']];
+const TYPES = [['biz', '소상공인'], ['public', '공공·연수'], ['univ', '대학·청년'], ['senior', '시니어·시민'], ['kids', '초등·아동']];
+const STATUSES = [['done', '출강 완료'], ['ongoing', '출강 중'], ['upcoming', '출강 예정']];
 const RICH = '줄바꿈은 그대로 반영돼요. *이렇게* 별표로 감싸면 코랄색 강조.';
 
 const T = (key, label, help) => ({ key, label, type: 'text', help });
@@ -16,7 +17,7 @@ const HERO = G('hero', '페이지 맨 위', [T('title', '제목'), R('lead', '�
 const CTA = G('cta', '맨 아래 안내 상자', [T('title', '제목'), T('text', '설명'), T('button', '버튼 글자')]);
 
 const SCHEMA = {
-  home: { label: '홈', view: '/', notice: '홈의 <b>강의 분야 카드</b>는 「강의」에서, <b>최근 출강 카드 3개</b>는 「강의후기·갤러리」의 현장별 이야기 앞 3개에서 가져와요.', fields: [
+  home: { label: '홈', view: '/', notice: '홈의 <b>강의 분야 카드</b>는 「강의」에서, <b>최근 출강 카드 3개</b>는 「프로젝트·이력·현장」의 현장 이야기 카드 앞 3개에서 가져와요.', fields: [
     G('hero', '첫 화면', [T('eyebrow', '작은 머리말'), R('title', '큰 제목'), R('lead', '설명'), IMG('photo', '프로필 사진'), T('photoAlt', '사진 설명 (화면에 안 보임, 검색·음성 안내용)'), T('badgeTop', '사진 위 배지'), T('badgeBottomNumber', '사진 아래 배지 숫자'), T('badgeBottomText', '사진 아래 배지 글자')]),
     L('stats', '숫자 4칸', [T('value', '숫자'), T('label', '설명')], '숫자'),
     G('method', '수업 방식', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), L('steps', '단계', [T('icon', '이모지'), T('title', '제목'), A('text', '설명')], '단계')]),
@@ -37,17 +38,18 @@ const SCHEMA = {
     G('format', '진행 안내 표', [T('title', '제목'), L('rows', '줄', [T('label', '항목'), R('value', '내용')], '줄')]),
     CTA,
   ] },
-  projects: { label: '프로젝트·이력', view: '/projects', fields: [
+  projects: { label: '프로젝트·이력·현장', view: '/projects', notice: '출강 기록은 <b>위에 있을수록 먼저</b> 보여요. 새 출강은 「+ 기록 추가」 후 ↑ 버튼으로 맨 위로 올리세요. 끝나면 상태를 「출강 완료」로 바꿔 주세요.', fields: [
     HERO,
     G('featured', '대표 프로젝트', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), IMG('image', '대표 이미지'), T('imageAlt', '이미지 설명'), A('lessons', '커리큘럼', '한 줄에 한 강씩 (1강, 2강… 번호는 자동)'), T('button', '버튼 글자')]),
-    G('history', '출강 이력', [T('title', '제목'), R('lead', '설명'), L('items', '출강 기록', [T('date', '날짜 (예: 2026.10.15)'), T('title', '기관·과정 이름'), A('desc', '내용'), T('role', '역할 (주강사·보조강사·멘토)'), SEL('type', '분류 (필터)', TYPES), { key: 'link', label: '블로그 후기 주소', type: 'text', help: '비워 두면 링크 없이 표시' }], '기록')]),
+    G('history', '출강 이력', [T('title', '제목'), R('lead', '설명'), L('items', '출강 기록', [T('title', '기관·과정 이름'), T('date', '기간 (예: 2026.08–09)'), A('desc', '강좌명·내용'), SEL('status', '상태', STATUSES), SEL('type', '분류 (필터)', TYPES)], '기록')]),
+    G('gallery', '현장 갤러리 (움직이는 사진)', [T('title', '제목'), L('items', '사진', [IMG('src', '사진'), T('title', '사진 설명'), T('tag', '장소·과정')], '사진')]),
+    G('cards', '현장 이야기 카드', [T('title', '제목'), L('items', '카드', [IMG('image', '사진'), T('imageAlt', '사진 설명 (검색·음성 안내용)'), T('tag', '꼬리표 (예: 소상공인 · 2026.10)'), SEL('color', '꼬리표 색', COLORS), T('title', '제목'), A('text', '내용'), T('link', '블로그 후기 주소')], '카드')]),
+    G('blog', '블로그 자동 목록', [T('title', '제목'), R('lead', '설명')]),
     CTA,
   ] },
-  reviews: { label: '강의후기·갤러리', view: '/reviews', fields: [
+  reviews: { label: '수강생 후기', view: '/reviews', notice: '지금은 비어 있는 페이지예요. 수강생이 직접 후기를 남기는 기능은 다음에 붙일 예정이에요.', fields: [
     HERO,
-    G('gallery', '현장 갤러리 (움직이는 사진)', [T('title', '제목'), L('items', '사진', [IMG('src', '사진'), T('title', '사진 설명'), T('tag', '장소·과정'), T('link', '블로그 후기 주소')], '사진')]),
-    G('cards', '현장별 이야기 카드', [T('title', '제목'), L('items', '카드', [IMG('image', '사진'), T('imageAlt', '사진 설명 (검색·음성 안내용)'), T('tag', '꼬리표 (예: 소상공인 · 2026.10)'), SEL('color', '꼬리표 색', COLORS), T('title', '제목'), A('text', '내용'), T('link', '블로그 후기 주소')], '카드')]),
-    G('blog', '블로그 자동 목록', [T('title', '제목'), R('lead', '설명')]),
+    G('empty', '빈 화면 안내', [T('title', '제목'), A('text', '설명')]),
   ] },
   classes: { label: '수업자료 목록', view: '/materials', root: 'list', notice: '수업마다 비밀번호를 정해요. 비밀번호는 <b>새로 정하거나 바꿀 때만</b> 입력하세요. 비워 두면 기존 비밀번호가 유지돼요. 자료는 3MB 이하 파일을 올리거나, 구글 드라이브 공유 링크를 붙여 넣으세요.', fields: [
     T('title', '수업 이름 (수강생에게 보임)'),

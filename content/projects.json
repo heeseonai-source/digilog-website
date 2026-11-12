@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "직접 만들고, 현장에서 가르칩니다",
-    "lead": "직접 기획한 강의 콘텐츠와 2026년 출강 기록입니다."
+    "lead": "대표 프로젝트와 출강 이력, 강의 현장 이야기를 한곳에 모았습니다."
   },
   "featured": {
     "eyebrow": "대표 프로젝트 · 오늘두AI × 디지로그쌤",
@@ -13,20 +13,246 @@
     "button": "우리 기관에 도입 문의"
   },
   "history": {
-    "title": "2026년 출강 기록",
-    "lead": "주강사·보조강사·멘토로 참여한 현장입니다. 제목을 누르면 블로그 후기로 이동해요.",
+    "title": "출강 이력",
+    "lead": "기관·학교에서 진행한 출강 기록입니다.",
     "items": [
-      { "date": "2026.09–10", "title": "경남대학교 소상공인 디지털 특성화대학 3학기", "desc": "당근·네이버 스마트스토어·플레이스로 온라인 판로 열기, 블로그·인스타 홍보", "role": "보조강사", "type": "biz", "link": "https://blog.naver.com/heeseon_ai/224467800842" },
-      { "date": "2026.10.16", "title": "마이 AI랩 멘토링 (대구테크노파크·경북대)", "desc": "대학생 팀 AI 프로젝트의 문제 정의·범위·상용성 멘토링", "role": "멘토", "type": "univ", "link": "https://blog.naver.com/heeseon_ai/224446731555" },
-      { "date": "2026.10.15", "title": "2026 장애인공동생활가정 시설장 연수 (여수)", "desc": "「혼자서도 든든한 업무파트너, AI 활용하기」 — AI 업무비서 만들기", "role": "보조강사", "type": "public", "link": "https://blog.naver.com/heeseon_ai/224445950906" },
-      { "date": "2026.10.13", "title": "(사)대한안마사협회 전국 임직원 연수회 (변산)", "desc": "약 300명, 시각장애인 교육생과 음성 대화형 AI 실습", "role": "보조강사", "type": "public", "link": "https://blog.naver.com/heeseon_ai/224445910172" },
-      { "date": "2026.08–09", "title": "경남대학교 소상공인 디지털 특성화대학 2학기", "desc": "4주 과정 — 상세페이지·로고·블로그 자동화·숏폼 제작", "role": "보조강사", "type": "biz", "link": "https://blog.naver.com/heeseon_ai/224462463735" },
-      { "date": "2026.08", "title": "경북대학교 AI 셰르파 양성과정 심화반", "desc": "바이브코딩 첫 세팅과 노코드 서비스 구현 실습 지원", "role": "보조강사", "type": "univ", "link": "https://blog.naver.com/heeseon_ai/224401087953" },
-      { "date": "2026.08", "title": "사천시 여성정책아카데미 (1·2주차)", "desc": "챗GPT·제미나이로 정책 아이디어 → 정책제안서·포스터·정책송 완성", "role": "보조강사", "type": "senior", "link": "https://blog.naver.com/heeseon_ai/224401775745" },
-      { "date": "2026.08.20", "title": "밀양시 스마트한 AI행정교실 (상동면)", "desc": "어르신과 함께 ChatGPT 가입부터 마을 사업계획서 초안까지", "role": "보조강사", "type": "senior", "link": "https://blog.naver.com/heeseon_ai/224401164683" },
-      { "date": "2026.07", "title": "서울특별시교육청 교육연수원 온라인 협업툴 활용 (2회)", "desc": "교육행정직 대상 챗GPT·제미나이 노트북·노션·캔바·앱스 스크립트 실습", "role": "보조강사", "type": "public", "link": "https://blog.naver.com/heeseon_ai/224360904297" },
-      { "date": "2026", "title": "「왕초탈 챗GPT」 온라인 강의 (오늘두AI)", "desc": "AI 입문자를 위한 10분 × 5강 녹화 강의 기획·제작", "role": "주강사·제작", "type": "senior", "link": "" }
+      {
+        "date": "2026.10–11",
+        "title": "마이 AI랩 프로젝트 설계 멘토링",
+        "desc": "한국지능정보사회진흥원·경북테크노파크·경북대학교 — 대학생 팀 AI 프로젝트의 문제 정의·범위·상용성 멘토링",
+        "status": "ongoing",
+        "type": "univ"
+      },
+      {
+        "date": "2026.10.15",
+        "title": "장애인공동생활가정 시설장 연수",
+        "desc": "「혼자서도 든든한 업무파트너, AI 활용하기」 — AI 업무비서 만들기",
+        "status": "done",
+        "type": "public"
+      },
+      {
+        "date": "2026.10.13",
+        "title": "(사)대한안마사협회",
+        "desc": "「시각장애인 대상 생성형 AI 활용법」 — 음성 대화형 AI 실습",
+        "status": "done",
+        "type": "public"
+      },
+      {
+        "date": "2026.09–10",
+        "title": "경남대학교 소상공인 디지털특성화대학 (3학기)",
+        "desc": "「AI 마케터」 — 당근·네이버 스마트스토어·플레이스로 온라인 판로 열기",
+        "status": "done",
+        "type": "biz"
+      },
+      {
+        "date": "2026.08–09",
+        "title": "경남대학교 소상공인 디지털특성화대학 (2학기)",
+        "desc": "「AI 마케터」 — 상세페이지·로고·블로그 자동화·숏폼 제작",
+        "status": "done",
+        "type": "biz"
+      },
+      {
+        "date": "2026.08–09",
+        "title": "사천시 여성정책 아카데미",
+        "desc": "「생각을 정책으로 제안하기」 — 정책제안서·포스터·정책송 완성",
+        "status": "done",
+        "type": "senior"
+      },
+      {
+        "date": "2026.08",
+        "title": "경남 파프리카연합회",
+        "desc": "「AI 기본 활용」",
+        "status": "done",
+        "type": "biz"
+      },
+      {
+        "date": "2026.08",
+        "title": "밀양시 스마트한 AI행정교실",
+        "desc": "「스마트한 AI행정교실」 — ChatGPT 가입부터 마을 사업계획서 초안까지",
+        "status": "done",
+        "type": "senior"
+      },
+      {
+        "date": "2026.08",
+        "title": "경북대학교 AI 셰르파 양성과정",
+        "desc": "「심화과정」 — 바이브코딩 첫 세팅과 노코드 서비스 구현",
+        "status": "done",
+        "type": "univ"
+      },
+      {
+        "date": "2026.08",
+        "title": "한국환경공단 홍보기획부",
+        "desc": "「AI 영상 생성 강의」",
+        "status": "done",
+        "type": "public"
+      },
+      {
+        "date": "2026.07–08",
+        "title": "서울특별시교육청 교육연수원",
+        "desc": "「온라인 협업 툴 활용」 — 챗GPT·제미나이 노트북·노션·캔바·앱스 스크립트 실습",
+        "status": "done",
+        "type": "public"
+      },
+      {
+        "date": "2026.06",
+        "title": "마산여성새일센터",
+        "desc": "「AI 기초 활용」",
+        "status": "done",
+        "type": "senior"
+      },
+      {
+        "date": "2026.06",
+        "title": "경남 중부권 돌봄노동자 지원센터",
+        "desc": "「기초 AI 역량 교육 모듈」",
+        "status": "done",
+        "type": "public"
+      },
+      {
+        "date": "2025.09–11",
+        "title": "2025 찾아가는 디지털 AI 교실(Ⅲ)",
+        "desc": "충무공초(진주) · 증산초(양산) · 안청초(창원) · 수정초(진주)",
+        "status": "done",
+        "type": "kids"
+      },
+      {
+        "date": "2025.08",
+        "title": "2025 찾아가는 디지털 AI 방학 캠프",
+        "desc": "호계지역아동센터(창원) · 소만지역아동센터(거창) · 느티나무지역아동센터(창원)",
+        "status": "done",
+        "type": "kids"
+      },
+      {
+        "date": "2025.05–07",
+        "title": "2025 찾아가는 디지털 AI 교실(Ⅱ)",
+        "desc": "경화초(창원) · 웅천초(창원)",
+        "status": "done",
+        "type": "kids"
+      },
+      {
+        "date": "2025.03–05",
+        "title": "2025 찾아가는 디지털 AI 교실(Ⅰ)",
+        "desc": "진성초(진주) · 웅동초(창원)",
+        "status": "done",
+        "type": "kids"
+      }
     ]
+  },
+  "gallery": {
+    "title": "사진으로 보는 강의 현장",
+    "items": [
+      {
+        "src": "/assets/field/gyeongnam-2-practice.jpg",
+        "title": "수강생 옆자리에서 함께 화면 보기",
+        "tag": "경남대 소상공인 2학기"
+      },
+      {
+        "src": "/assets/field/massage-assoc-hall.jpg",
+        "title": "300명이 함께한 연수회 실습",
+        "tag": "대한안마사협회 연수회"
+      },
+      {
+        "src": "/assets/field/my-ai-lab.jpg",
+        "title": "팀의 이야기를 듣는 멘토링",
+        "tag": "마이 AI랩"
+      },
+      {
+        "src": "/assets/field/gyeongnam-3.jpg",
+        "title": "온라인 판로를 여는 3학기 수업",
+        "tag": "경남대 소상공인 3학기"
+      },
+      {
+        "src": "/assets/field/miryang.jpg",
+        "title": "어르신 AI행정교실을 마치고",
+        "tag": "밀양 AI행정교실"
+      },
+      {
+        "src": "/assets/field/gyeongnam-2.jpg",
+        "title": "AI로 블로그 자동화 배우기",
+        "tag": "경남대 소상공인 2학기"
+      },
+      {
+        "src": "/assets/field/my-ai-lab-hall.jpg",
+        "title": "대학생 팀 멘토링 현장",
+        "tag": "마이 AI랩"
+      },
+      {
+        "src": "/assets/field/massage-assoc.png",
+        "title": "음성으로 대화하는 AI, 제미나이 라이브",
+        "tag": "대한안마사협회 연수회"
+      }
+    ]
+  },
+  "cards": {
+    "title": "현장별 이야기",
+    "items": [
+      {
+        "image": "/assets/field/gyeongnam-3.jpg",
+        "imageAlt": "경남대 소상공인 디지털 특성화대학 3학기 교실 전경",
+        "tag": "소상공인 · 2026.10",
+        "color": "coral",
+        "title": "우리 가게를 온라인 시장에 올리는 수업",
+        "text": "당근·스마트스토어·플레이스로 손님이 찾아올 길을 만들고, 블로그·인스타로 그 길을 알렸습니다.",
+        "link": "https://blog.naver.com/heeseon_ai/224467800842"
+      },
+      {
+        "image": "/assets/field/gyeongnam-2.jpg",
+        "imageAlt": "경남대 소상공인 교육 2학기, 강사가 화면을 띄우고 설명하는 모습",
+        "tag": "소상공인 · 2026.09",
+        "color": "coral",
+        "title": "4주 만에 상세페이지·로고·숏폼까지",
+        "text": "가장 반응이 뜨거웠던 건 이미지 생성 수업. “AI를 어디에 쓰지?”에 눈으로 답이 보였습니다.",
+        "link": "https://blog.naver.com/heeseon_ai/224462463735"
+      },
+      {
+        "image": "/assets/field/my-ai-lab.jpg",
+        "imageAlt": "마이 AI랩 멘토링에서 팀의 이야기를 듣는 노희선 강사",
+        "tag": "대학생 · 2026.10",
+        "color": "sky",
+        "title": "코드 대신 방향을 잡아 주는 멘토링",
+        "text": "가장 많이 던진 질문은 “이 서비스가 정말 필요한가?”였습니다.",
+        "link": "https://blog.naver.com/heeseon_ai/224446731555"
+      },
+      {
+        "image": "/assets/field/massage-assoc.png",
+        "imageAlt": "대한안마사협회 연수회 대강당, 보조강사로 수업을 지켜보는 노희선 강사",
+        "tag": "연수 · 2026.10",
+        "color": "mint",
+        "title": "처음 가 본 시각장애인 AI 교육 현장",
+        "text": "“도움보다 존중, 대신하기보다 스스로.” 오히려 제가 더 많이 배운 300명의 현장.",
+        "link": "https://blog.naver.com/heeseon_ai/224445910172"
+      },
+      {
+        "image": "/assets/field/group-home.jpg",
+        "imageAlt": "장애인공동생활가정 시설장 연수 행사 안내판",
+        "tag": "연수 · 2026.10",
+        "color": "mint",
+        "title": "시설장님들의 AI 업무비서 만들기",
+        "text": "오전부터 이어진 일정에도, 수업이 진행될수록 호응이 커졌습니다.",
+        "link": "https://blog.naver.com/heeseon_ai/224445950906"
+      },
+      {
+        "image": "/assets/field/sacheon.jpg",
+        "imageAlt": "사천시 여성회관 건물 외관",
+        "tag": "시민 · 2026.08",
+        "color": "sun",
+        "title": "3시간 만에 정책제안서와 정책송까지",
+        "text": "내가 매일 지나는 길의 불편함 한 줄이, AI와 함께 정책 언어가 되었습니다.",
+        "link": "https://blog.naver.com/heeseon_ai/224401812706"
+      },
+      {
+        "image": "/assets/field/miryang.jpg",
+        "imageAlt": "밀양 상동면 문화센터 앞에서 함께한 강사들",
+        "tag": "어르신 · 2026.08",
+        "color": "sun",
+        "title": "밀양 어르신들의 스마트한 행정교실",
+        "text": "ChatGPT 가입부터 한복 사진 이모티콘, 마을 사업계획서 초안까지.",
+        "link": "https://blog.naver.com/heeseon_ai/224401164683"
+      }
+    ]
+  },
+  "blog": {
+    "title": "새로 올라온 후기",
+    "lead": "블로그에 출강후기를 올리면 여기에 자동으로 나타납니다."
   },
   "cta": {
     "title": "다음 출강 기록의 주인공이 되어 주세요",
