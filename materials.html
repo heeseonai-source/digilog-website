@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko" class="no-js">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수업자료실 | 디지로그쌤 노희선</title>
+<meta name="description" content="디지로그쌤 수업 수강생을 위한 자료실. 수업에서 안내받은 비밀번호로 자료를 받을 수 있습니다.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFBF5">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23F2603F'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-family='Arial' font-weight='700' font-size='24' fill='%23fff'%3Ed%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/style.css"><script src="/script.js" defer></script>
+</head>
+<body data-page="materials">
+<a class="skip-link" href="#main">본문 바로가기</a>
+<header class="site-header" data-include="header"></header>
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">수업자료</span>
+    <h1>수강생 자료실</h1>
+    <p>수업 시간에 안내받은 비밀번호를 넣으면 자료를 받을 수 있어요. 비밀번호는 수업마다 다릅니다.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <form class="card lock-card" id="materials-form" novalidate>
+      <div class="field">
+        <label for="class-select">어떤 수업을 들으셨나요?</label>
+        <select id="class-select" name="classId" required><option value="">목록을 불러오는 중…</option></select>
+      </div>
+      <div class="field">
+        <label for="class-pw">수업 비밀번호</label>
+        <input id="class-pw" name="password" type="password" autocomplete="off" required>
+        <span class="hint">비밀번호를 잊으셨다면 강사에게 문의해 주세요.</span>
+      </div>
+      <button class="btn btn-primary" type="submit" style="width:100%">자료 열기</button>
+      <p class="form-msg" role="status" aria-live="polite"></p>
+      <div id="materials-result"></div>
+    </form>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer" data-include="footer"></footer>
+</body>
+</html>
