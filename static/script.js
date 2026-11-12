@@ -45,6 +45,24 @@ document.querySelectorAll('ul[data-blog]').forEach(async list => {
   }
 });
 
+/* ---------- 블로그 출강후기 큰 카드 (data-blog-cards) ---------- */
+document.querySelectorAll('[data-blog-cards]').forEach(async box => {
+  const status = box.nextElementSibling?.classList.contains('blog-status') ? box.nextElementSibling : null;
+  try {
+    const r = await fetch(`/api/blog?limit=${box.dataset.limit || 9}&category=${encodeURIComponent(box.dataset.category || '')}`);
+    if (!r.ok) throw new Error();
+    const { posts } = await r.json();
+    if (!posts.length) throw new Error();
+    box.innerHTML = posts.map(p => `<a class="card review-card blog-card" href="${esc(p.link)}" target="_blank" rel="noopener">
+      ${p.image ? `<img src="${esc(p.image)}" data-fallback="${esc(p.thumbnail)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="550" height="550">` : '<span class="ph" aria-hidden="true"></span>'}
+      <div class="body"><span class="tag coral">${esc(p.category)} · ${esc(p.date)}</span><h3>${esc(p.title)}</h3>${p.summary ? `<p>${esc(p.summary)}</p>` : ''}<span class="more">후기 읽기 →</span></div></a>`).join('');
+    box.querySelectorAll('img[data-fallback]').forEach(img => img.addEventListener('error', () => { if (img.dataset.fallback && img.src !== img.dataset.fallback) img.src = img.dataset.fallback; }, { once: true }));
+    if (status) status.remove();
+  } catch {
+    if (status) status.innerHTML = `출강 이야기를 불러오지 못했어요. <a class="text-link" href="${BLOG}" target="_blank" rel="noopener">블로그에서 직접 보기</a>`;
+  }
+});
+
 /* ---------- 현장 갤러리 (강의후기 페이지) — 사진 목록은 관리자 화면에서 관리 ---------- */
 const galleryEl = document.getElementById('field-gallery');
 let GALLERY = [];

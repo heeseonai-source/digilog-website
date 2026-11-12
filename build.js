@@ -108,9 +108,8 @@ ${lec.courses.map((c, i) => `    <a class="card course-card reveal" href="/lectu
 
 <section class="section"><div class="wrap">
   <div class="section-head split"><div><span class="eyebrow">최근 출강</span><h2 class="section-title">${rich(h.recent.title)}</h2><p class="section-lead">${rich(h.recent.lead)}</p></div><a class="text-link" href="/projects#stories">현장 이야기 전체 보기 →</a></div>
-  <div class="grid grid-3">
-${rev.cards.items.slice(0, 3).map(reviewCard).join('\n')}
-  </div>
+  <div class="grid grid-3" data-blog-cards data-limit="3" data-category="출강후기"></div>
+  <p class="blog-status">최근 출강 이야기를 불러오는 중이에요…</p>
 </div></section>
 
 <section class="section alt"><div class="wrap">
@@ -196,16 +195,10 @@ ${HISTORY_TYPES.map(([v, l], i) => `    <button type="button" aria-pressed="${i 
 ${p.history.items.map(it => { const [label, cls] = STATUS[it.status] || STATUS.done; return `    <li data-type="${esc(it.type)}"><span class="date">${esc(it.date)}</span><div><h3>${esc(it.title)}</h3><p>${esc(it.desc)}</p></div><div class="side"><span class="tag${cls}">${label}</span></div></li>`; }).join('\n')}
   </ul>
 </div></section>
-<section class="section" id="stories">
-  <div class="wrap section-head"><span class="eyebrow">현장 이야기</span><h2 class="section-title">${rich(p.cards.title)}</h2></div>
-  <div class="wrap grid grid-3">
-${p.cards.items.map(reviewCard).join('\n')}
-  </div>
-</section>
-<section class="section alt"><div class="wrap">
-  <div class="section-head split"><div><span class="eyebrow">블로그 최신 출강 기록</span><h2 class="section-title">${rich(p.blog.title)}</h2><p class="section-lead">${rich(p.blog.lead)}</p></div><a class="text-link" href="https://blog.naver.com/heeseon_ai" target="_blank" rel="noopener">블로그에서 모두 보기 →</a></div>
-  <ul class="blog-list" data-blog data-limit="8" data-category="출강후기"></ul>
-  <p class="blog-status">최신 기록을 불러오는 중이에요…</p>
+<section class="section" id="stories"><div class="wrap">
+  <div class="section-head split"><div><span class="eyebrow">현장 이야기</span><h2 class="section-title">${rich(p.stories.title)}</h2><p class="section-lead">${rich(p.stories.lead)}</p></div><a class="text-link" href="https://blog.naver.com/heeseon_ai" target="_blank" rel="noopener">블로그에서 모두 보기 →</a></div>
+  <div class="grid grid-3" data-blog-cards data-limit="${Number(p.stories.count) || 9}" data-category="출강후기"></div>
+  <p class="blog-status">현장 이야기를 불러오는 중이에요…</p>
 </div></section>
 ${cta(p.cta, '/contact')}`;
 }

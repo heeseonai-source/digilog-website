@@ -17,7 +17,7 @@ const HERO = G('hero', '페이지 맨 위', [T('title', '제목'), R('lead', '�
 const CTA = G('cta', '맨 아래 안내 상자', [T('title', '제목'), T('text', '설명'), T('button', '버튼 글자')]);
 
 const SCHEMA = {
-  home: { label: '홈', view: '/', notice: '홈의 <b>강의 분야 카드</b>는 「강의」에서, <b>최근 출강 카드 3개</b>는 「프로젝트·이력·현장」의 현장 이야기 카드 앞 3개에서 가져와요.', fields: [
+  home: { label: '홈', view: '/', notice: '홈의 <b>강의 분야 카드</b>는 「강의」에서, <b>최근 출강 카드 3개</b>는 블로그 「출강후기」 최신 글 3개가 자동으로 보여요.', fields: [
     G('hero', '첫 화면', [T('eyebrow', '작은 머리말'), R('title', '큰 제목'), R('lead', '설명'), IMG('photo', '프로필 사진'), T('photoAlt', '사진 설명 (화면에 안 보임, 검색·음성 안내용)'), T('badgeTop', '사진 위 배지'), T('badgeBottomNumber', '사진 아래 배지 숫자'), T('badgeBottomText', '사진 아래 배지 글자')]),
     L('stats', '숫자 4칸', [T('value', '숫자'), T('label', '설명')], '숫자'),
     G('method', '수업 방식', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), L('steps', '단계', [T('icon', '이모지'), T('title', '제목'), A('text', '설명')], '단계')]),
@@ -42,8 +42,7 @@ const SCHEMA = {
     HERO,
     G('gallery', '현장 갤러리 (맨 위 움직이는 사진)', [T('title', '제목'), L('items', '사진', [IMG('src', '사진'), T('title', '사진 설명'), T('tag', '장소·과정')], '사진')]),
     G('history', '출강 이력', [T('title', '제목'), R('lead', '설명'), L('items', '출강 기록', [T('title', '기관·과정 이름'), T('date', '기간 (예: 2026.08–09)'), A('desc', '강좌명·내용'), SEL('status', '상태', STATUSES), SEL('type', '분류 (필터)', TYPES)], '기록')]),
-    G('cards', '현장 이야기 카드', [T('title', '제목'), L('items', '카드', [IMG('image', '사진'), T('imageAlt', '사진 설명 (검색·음성 안내용)'), T('tag', '꼬리표 (예: 소상공인 · 2026.10)'), SEL('color', '꼬리표 색', COLORS), T('title', '제목'), A('text', '내용'), T('link', '블로그 후기 주소')], '카드')]),
-    G('blog', '블로그 자동 목록', [T('title', '제목'), R('lead', '설명')]),
+    G('stories', '현장별 이야기 (블로그 「출강후기」 글이 자동으로 카드가 돼요)', [T('title', '제목'), R('lead', '설명'), SEL('count', '보여줄 카드 수', [['6', '6개'], ['9', '9개'], ['12', '12개']])]),
     CTA,
   ] },
   reviews: { label: '수강생 후기', view: '/reviews', notice: '지금은 비어 있는 페이지예요. 수강생이 직접 후기를 남기는 기능은 다음에 붙일 예정이에요.', fields: [

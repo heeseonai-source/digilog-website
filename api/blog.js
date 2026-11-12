@@ -8,6 +8,18 @@ const decode = s => s
   .trim();
 const tag = (xml, name) => { const m = xml.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`)); return m ? decode(m[1]) : ''; };
 
+// 본문 앞부분에서 인사말을 빼고 핵심 한두 문장만 요약으로 사용
+function summarize(html) {
+  let t = html.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+  t = t.replace(/^안녕하세요[^.!]*[.!]\s*/, '').replace(/^[^.!]*(노희선|디지로그쌤)\s*입니다[.!]?\s*/, '').replace(/^삽질은[^!]*!\s*[^.!]*입니다[.!]?\s*(🤩)?\s*/, '');
+  const key = t.match(/결론부터 말씀드(?:리면|릴게요)[,.]?\s*(.+)/);
+  if (key) t = key[1];
+  const sentences = t.match(/[^.!?]+[.!?]/g) || [t];
+  let out = '';
+  for (const s of sentences) { if ((out + s).length > 110 && out) break; out += s; }
+  return out.trim().slice(0, 140);
+}
+
 module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const limit = Math.min(Number(url.searchParams.get('limit')) || 6, 20);
@@ -26,6 +38,8 @@ module.exports = async (req, res) => {
         category: tag(it, 'category'),
         date: isNaN(d) ? '' : `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`,
         thumbnail: img ? img[1].replace(/^http:/, 'https:') : '',
+        image: img ? img[1].replace(/^http:/, 'https:').replace(/\?type=\w+$/, '') + '?type=w3' : '',
+        summary: summarize(desc),
       };
     });
     if (category) posts = posts.filter(p => p.category === category);

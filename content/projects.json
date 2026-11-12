@@ -173,77 +173,10 @@
       }
     ]
   },
-  "cards": {
+  "stories": {
     "title": "현장별 이야기",
-    "items": [
-      {
-        "image": "/assets/field/gyeongnam-3.jpg",
-        "imageAlt": "경남대 소상공인 디지털 특성화대학 3학기 교실 전경",
-        "tag": "소상공인 · 2026.10",
-        "color": "coral",
-        "title": "우리 가게를 온라인 시장에 올리는 수업",
-        "text": "당근·스마트스토어·플레이스로 손님이 찾아올 길을 만들고, 블로그·인스타로 그 길을 알렸습니다.",
-        "link": "https://blog.naver.com/heeseon_ai/224467800842"
-      },
-      {
-        "image": "/assets/field/gyeongnam-2.jpg",
-        "imageAlt": "경남대 소상공인 교육 2학기, 강사가 화면을 띄우고 설명하는 모습",
-        "tag": "소상공인 · 2026.09",
-        "color": "coral",
-        "title": "4주 만에 상세페이지·로고·숏폼까지",
-        "text": "가장 반응이 뜨거웠던 건 이미지 생성 수업. “AI를 어디에 쓰지?”에 눈으로 답이 보였습니다.",
-        "link": "https://blog.naver.com/heeseon_ai/224462463735"
-      },
-      {
-        "image": "/assets/field/my-ai-lab.jpg",
-        "imageAlt": "마이 AI랩 멘토링에서 팀의 이야기를 듣는 노희선 강사",
-        "tag": "대학생 · 2026.10",
-        "color": "sky",
-        "title": "코드 대신 방향을 잡아 주는 멘토링",
-        "text": "가장 많이 던진 질문은 “이 서비스가 정말 필요한가?”였습니다.",
-        "link": "https://blog.naver.com/heeseon_ai/224446731555"
-      },
-      {
-        "image": "/assets/field/massage-assoc.png",
-        "imageAlt": "대한안마사협회 연수회 대강당, 보조강사로 수업을 지켜보는 노희선 강사",
-        "tag": "연수 · 2026.10",
-        "color": "mint",
-        "title": "처음 가 본 시각장애인 AI 교육 현장",
-        "text": "“도움보다 존중, 대신하기보다 스스로.” 오히려 제가 더 많이 배운 300명의 현장.",
-        "link": "https://blog.naver.com/heeseon_ai/224445910172"
-      },
-      {
-        "image": "/assets/field/group-home.jpg",
-        "imageAlt": "장애인공동생활가정 시설장 연수 행사 안내판",
-        "tag": "연수 · 2026.10",
-        "color": "mint",
-        "title": "시설장님들의 AI 업무비서 만들기",
-        "text": "오전부터 이어진 일정에도, 수업이 진행될수록 호응이 커졌습니다.",
-        "link": "https://blog.naver.com/heeseon_ai/224445950906"
-      },
-      {
-        "image": "/assets/field/sacheon.jpg",
-        "imageAlt": "사천시 여성회관 건물 외관",
-        "tag": "시민 · 2026.08",
-        "color": "sun",
-        "title": "3시간 만에 정책제안서와 정책송까지",
-        "text": "내가 매일 지나는 길의 불편함 한 줄이, AI와 함께 정책 언어가 되었습니다.",
-        "link": "https://blog.naver.com/heeseon_ai/224401812706"
-      },
-      {
-        "image": "/assets/field/miryang.jpg",
-        "imageAlt": "밀양 상동면 문화센터 앞에서 함께한 강사들",
-        "tag": "어르신 · 2026.08",
-        "color": "sun",
-        "title": "밀양 어르신들의 스마트한 행정교실",
-        "text": "ChatGPT 가입부터 한복 사진 이모티콘, 마을 사업계획서 초안까지.",
-        "link": "https://blog.naver.com/heeseon_ai/224401164683"
-      }
-    ]
-  },
-  "blog": {
-    "title": "새로 올라온 후기",
-    "lead": "블로그에 출강후기를 올리면 여기에 자동으로 나타납니다."
+    "lead": "블로그에 출강후기를 올리면 여기에 자동으로 나타나요. 카드를 누르면 전체 후기를 볼 수 있어요.",
+    "count": "9"
   },
   "cta": {
     "title": "다음 출강 기록의 주인공이 되어 주세요",
