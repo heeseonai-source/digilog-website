@@ -1,0 +1,19 @@
+[
+  {
+    "id": "sample",
+    "title": "샘플 수업 (테스트용 · 비밀번호 digilog)",
+    "passwordHash": "dce66c5e881ca486512f2363a115cddb92ed81a7f31f1c8c8c61a0e3f3ce9cd7",
+    "files": [
+      {
+        "name": "챗GPT 프롬프트 작성틀",
+        "url": "https://blog.naver.com/heeseon_ai/224309998133",
+        "note": "블로그 글 — 실제 수업 자료로 바꿔 주세요"
+      },
+      {
+        "name": "바이브코딩 배포 방법 비교",
+        "url": "https://blog.naver.com/heeseon_ai/224427245356",
+        "note": "Vercel 바로 배포 vs GitHub 연동"
+      }
+    ]
+  }
+]

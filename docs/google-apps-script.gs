@@ -2,7 +2,7 @@
  * 디지로그쌤 홈페이지 강의 문의 → 구글 시트 저장용 앱스 스크립트
  * 사용법은 docs/구글시트-연결방법.md 를 보세요.
  */
-const SECRET = '여기에-비밀값'; // Vercel 환경변수 SHEET_SECRET 과 똑같이 맞춥니다
+const SECRET = ''; // 비워 두면 확인 안 함. 쓰려면 Vercel 환경변수 SHEET_SECRET 과 똑같이 맞춥니다 (2026-11-12 실제 배포본은 비워 둠)
 const NOTIFY_EMAIL = '';        // 새 문의가 오면 알림받을 메일 주소 (비워 두면 알림 없음)
 
 function doPost(e) {

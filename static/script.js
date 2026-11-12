@@ -1,44 +1,20 @@
 'use strict';
 /* 디지로그쌤 홈페이지 공통 스크립트
-   - 메뉴(헤더)와 푸터는 아래 NAV 목록 한 곳에서 관리합니다. 메뉴를 바꾸려면 여기만 고치세요. */
-const NAV = [
-  { href: '/', label: '홈', key: 'home' },
-  { href: '/about', label: '소개', key: 'about' },
-  { href: '/lectures', label: '강의', key: 'lectures' },
-  { href: '/projects', label: '프로젝트·이력', key: 'projects' },
-  { href: '/reviews', label: '강의후기', key: 'reviews' },
-  { href: '/materials', label: '수업자료', key: 'materials' },
-];
-const EMAIL = 'heeseon.ai@gmail.com';
-const BLOG = 'https://blog.naver.com/heeseon_ai';
+   페이지 내용은 관리자 화면(/admin)이나 content/*.json 에서 고칩니다. */
+const EMAIL = document.body.dataset.email || 'heeseon.ai@gmail.com';
+const BLOG = document.body.dataset.blogUrl ||'https://blog.naver.com/heeseon_ai';
 
 document.documentElement.classList.remove('no-js');
-const page = document.body.dataset.page || '';
 
-/* ---------- 헤더·푸터 ---------- */
-const header = document.querySelector('[data-include="header"]');
-if (header) {
-  const links = NAV.map(n => `<a href="${n.href}"${n.key === page ? ' aria-current="page"' : ''}>${n.label}</a>`).join('');
-  header.innerHTML = `<div class="wrap">
-    <a class="logo" href="/" aria-label="디지로그쌤 홈"><span class="logo-mark" aria-hidden="true">d</span><span>디지로그쌤<small>생성형 AI 강사 노희선</small></span></a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">메뉴</button>
-    <nav class="nav" id="site-nav" aria-label="주요 메뉴">${links}<a class="nav-cta" href="/contact"${page === 'contact' ? ' aria-current="page"' : ''}>강의 문의</a></nav>
-  </div>`;
-  const btn = header.querySelector('.menu-toggle');
-  const nav = header.querySelector('.nav');
-  btn.addEventListener('click', () => {
+/* ---------- 모바일 메뉴 ---------- */
+const menuBtn = document.querySelector('.menu-toggle');
+if (menuBtn) {
+  const nav = document.getElementById('site-nav');
+  menuBtn.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(open));
-    btn.textContent = open ? '닫기' : '메뉴';
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.textContent = open ? '닫기' : '메뉴';
   });
-}
-const footer = document.querySelector('[data-include="footer"]');
-if (footer) {
-  footer.innerHTML = `<div class="wrap">
-    <div><strong style="color:var(--ink)">디지로그쌤 노희선</strong> · Roh Heeseon<br><a href="mailto:${EMAIL}">${EMAIL}</a></div>
-    <nav aria-label="하단 메뉴">${NAV.slice(1).map(n => `<a href="${n.href}">${n.label}</a>`).join('')}<a href="/contact">문의</a><a href="${BLOG}" target="_blank" rel="noopener">블로그</a></nav>
-    <small>© ${new Date().getFullYear()} DIGILOG. All rights reserved.</small>
-  </div>`;
 }
 
 /* ---------- 스크롤 등장 효과 ---------- */
@@ -51,7 +27,7 @@ if ('IntersectionObserver' in window) {
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------- 블로그 최신글 (data-blog 속성이 있는 목록) ---------- */
-document.querySelectorAll('[data-blog]').forEach(async list => {
+document.querySelectorAll('ul[data-blog]').forEach(async list => {
   const limit = list.dataset.limit || 6;
   const category = list.dataset.category || '';
   const status = list.nextElementSibling?.classList.contains('blog-status') ? list.nextElementSibling : null;
@@ -69,20 +45,11 @@ document.querySelectorAll('[data-blog]').forEach(async list => {
   }
 });
 
-/* ---------- 현장 갤러리 (강의후기 페이지) ----------
-   사진 추가: assets/field 폴더에 사진을 넣고 아래 목록에 한 줄 추가하세요. */
-const GALLERY = [
-  { src: '/assets/field/gyeongnam-2-practice.jpg', title: '수강생 옆자리에서 함께 화면 보기', tag: '경남대 소상공인 2학기', link: 'https://blog.naver.com/heeseon_ai/224462463735' },
-  { src: '/assets/field/massage-assoc-hall.jpg', title: '300명이 함께한 연수회 실습', tag: '대한안마사협회 연수회', link: 'https://blog.naver.com/heeseon_ai/224445910172' },
-  { src: '/assets/field/my-ai-lab.jpg', title: '팀의 이야기를 듣는 멘토링', tag: '마이 AI랩', link: 'https://blog.naver.com/heeseon_ai/224446731555' },
-  { src: '/assets/field/gyeongnam-3.jpg', title: '온라인 판로를 여는 3학기 수업', tag: '경남대 소상공인 3학기', link: 'https://blog.naver.com/heeseon_ai/224467800842' },
-  { src: '/assets/field/miryang.jpg', title: '어르신 AI행정교실을 마치고', tag: '밀양 AI행정교실', link: 'https://blog.naver.com/heeseon_ai/224401164683' },
-  { src: '/assets/field/gyeongnam-2.jpg', title: 'AI로 블로그 자동화 배우기', tag: '경남대 소상공인 2학기', link: 'https://blog.naver.com/heeseon_ai/224462463735' },
-  { src: '/assets/field/my-ai-lab-hall.jpg', title: '대학생 팀 멘토링 현장', tag: '마이 AI랩', link: 'https://blog.naver.com/heeseon_ai/224446731555' },
-  { src: '/assets/field/massage-assoc.png', title: '음성으로 대화하는 AI, 제미나이 라이브', tag: '대한안마사협회 연수회', link: 'https://blog.naver.com/heeseon_ai/224445910172' },
-];
+/* ---------- 현장 갤러리 (강의후기 페이지) — 사진 목록은 관리자 화면에서 관리 ---------- */
 const galleryEl = document.getElementById('field-gallery');
-if (galleryEl) {
+let GALLERY = [];
+try { GALLERY = JSON.parse(document.getElementById('gallery-data')?.textContent || '[]'); } catch {}
+if (galleryEl && GALLERY.length) {
   const tilts = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 1.8];
   const card = (g, i, dup) => `<button class="photo" type="button" data-i="${i}" style="--tilt:${tilts[i % tilts.length]}deg"${dup ? ' aria-hidden="true" tabindex="-1"' : ''}>
       <img src="${g.src}" alt="${dup ? '' : esc(g.title)}" loading="lazy" width="300" height="225"><span>${esc(g.title)}<small>${esc(g.tag)}</small></span></button>`;
@@ -186,7 +153,7 @@ if (contactForm) {
       const res = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(res.error || 'send failed');
       contactForm.reset();
-      msg.className = 'form-msg ok'; msg.textContent = '문의가 접수됐어요! 영업일 기준 1~2일 안에 회신드릴게요.';
+      msg.className = 'form-msg ok'; msg.textContent = contactForm.dataset.success || '문의가 접수됐어요!';
     } catch {
       const body = Object.entries({ 기관: data.org, 담당자: data.name, 연락처: data.phone, 이메일: data.email, 교육대상: data.audience, 인원: data.size, 희망일정: data.date, 관심주제: data.topic, 내용: data.message }).map(([k, v]) => `${k}: ${v || ''}`).join('\n');
       msg.className = 'form-msg error';

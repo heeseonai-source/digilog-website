@@ -1,7 +1,7 @@
 // GET  /api/materials           → 수업 목록 (id, title)
 // POST /api/materials {classId, password} → 비밀번호가 맞으면 자료 링크
 const crypto = require('crypto');
-const classes = require('./_lib/materials');
+const classes = require('./_data/materials.json');
 const { send, readBody } = require('./_lib/http');
 
 // 같은 IP에서 짧은 시간에 너무 많이 틀리면 잠시 막기 (서버 인스턴스 단위의 간단한 보호)

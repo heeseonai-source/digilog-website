@@ -6,14 +6,16 @@ function send(res, status, data, headers = {}) {
   res.end(JSON.stringify(data));
 }
 
-async function readBody(req) {
+async function readBody(req, limit = 20000) {
   if (req.body !== undefined) return typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body;
-  let raw = '';
+  const chunks = [];
+  let size = 0;
   for await (const chunk of req) {
-    raw += chunk;
-    if (raw.length > 20000) throw new Error('too large');
+    size += chunk.length;
+    if (size > limit) throw new Error('too large');
+    chunks.push(chunk);
   }
-  return JSON.parse(raw || '{}');
+  return JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}');
 }
 
 module.exports = { send, readBody };
