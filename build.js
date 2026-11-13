@@ -2,6 +2,7 @@
 // 글 안의 표시법:  *강조할 말*  → 코랄색 강조,  줄바꿈 → 그대로 줄바꿈
 const fs = require('fs');
 const path = require('path');
+const X = require('./astryx'); // Astryx 디자인 시스템 버튼·카드 (neutral 테마)
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'dist');
@@ -25,7 +26,7 @@ function layout(site, { key, title, description, body, noindex }) {
   const fullTitle = key === 'home' ? `${site.name} ${site.person} | ${site.role}` : `${title} | ${site.name} ${site.person}`;
   const nav = NAV.map(([href, label, k]) => `<a href="${href}"${k === key ? ' aria-current="page"' : ''}>${label}</a>`).join('');
   return `<!doctype html>
-<html lang="ko" class="no-js">
+<html lang="ko" class="no-js" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(fullTitle)}</title>
@@ -34,6 +35,7 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta property="og:t
 <meta name="theme-color" content="#FFFBF5">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23F2603F'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-family='Arial' font-weight='700' font-size='24' fill='%23fff'%3Ed%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+${X.CSS_LINKS}
 <link rel="stylesheet" href="/style.css"><script src="/script.js" defer></script>
 </head>
 <body data-page="${key}" data-email="${esc(site.email)}" data-blog-url="${esc(site.blog)}">
@@ -51,6 +53,7 @@ ${body}
   <nav aria-label="하단 메뉴">${NAV.slice(1).map(([h, l]) => `<a href="${h}">${l}</a>`).join('')}<a href="/contact">문의</a><a href="${esc(site.blog)}" target="_blank" rel="noopener">블로그</a></nav>
   <small>© ${new Date().getFullYear()} DIGILOG. All rights reserved.</small>
 </div></footer>
+${BLOG_CARD_TEMPLATE}
 </body>
 </html>
 `;
@@ -64,13 +67,13 @@ const pageHero = (eyebrow, h) => `<section class="page-hero"><div class="wrap">
 
 const cta = (c, href, dark) => `<section class="section"${dark ? ' style="padding-top:0"' : ''}><div class="wrap"><div class="cta">
   <div><h2>${rich(c.title)}</h2><p>${rich(c.text)}</p></div>
-  <a class="btn ${href === '/contact' || href.startsWith('/contact') ? 'btn-primary' : 'btn-light'}" href="${esc(href)}">${esc(c.button)}</a>
+  ${X.button({ label: c.button, href, variant: href.startsWith('/contact') ? 'primary' : 'secondary' })}
 </div></div></section>`;
 
-const reviewCard = c => `<a class="card review-card reveal" href="${esc(c.link || '#')}"${linkAttrs(c.link)}>
-  <img src="${esc(c.image)}" alt="${esc(c.imageAlt || c.title)}" loading="lazy" width="966" height="725">
-  <div class="body"><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p><span class="more">후기 읽기 →</span></div>
-</a>`;
+// 블로그 출강후기 큰 카드 틀 — script.js가 복제해서 글 내용을 채운다
+const BLOG_CARD_TEMPLATE = `<template id="blog-card-template">${X.clickableCard(
+  '<img alt="" loading="lazy" referrerpolicy="no-referrer" width="550" height="550"><div class="body"><span class="tag coral"></span><h3></h3><p></p><span class="more">후기 읽기 →</span></div>',
+  { label: '출강 후기', href: '#', target: '_blank', className: 'review-card blog-card', padding: 0 })}</template>`;
 
 /* ---------------- 페이지 ---------------- */
 function home(site, h, lec, rev) {
@@ -79,7 +82,7 @@ function home(site, h, lec, rev) {
     <span class="eyebrow">${esc(h.hero.eyebrow)}</span>
     <h1>${rich(h.hero.title)}</h1>
     <p class="lead">${rich(h.hero.lead)}</p>
-    <div class="btn-row"><a class="btn btn-primary" href="/contact">기관·단체 강의 문의</a><a class="btn btn-ghost" href="/lectures">강의 분야 보기</a></div>
+    <div class="btn-row">${X.button({ label: '기관·단체 강의 문의', href: '/contact' })}${X.button({ label: '강의 분야 보기', href: '/lectures', variant: 'secondary' })}</div>
   </div>
   <div class="hero-photo">
     <img src="${esc(h.hero.photo)}" width="1122" height="1402" alt="${esc(h.hero.photoAlt)}" fetchpriority="high">
@@ -95,14 +98,14 @@ ${h.stats.map(s => `  <div class="stat"><b>${esc(s.value)}</b><span>${esc(s.labe
 <section class="section steps"><div class="wrap">
   <div class="section-head center"><span class="eyebrow">${esc(h.method.eyebrow)}</span><h2 class="section-title">${rich(h.method.title)}</h2><p class="section-lead">${rich(h.method.lead)}</p></div>
   <div class="grid grid-3">
-${h.method.steps.map((s, i) => `    <div class="card reveal"><div class="step-icon" style="background:var(--${['sun', 'mint', 'sky'][i % 3]}-soft)">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${rich(s.text)}</p></div>`).join('\n')}
+${h.method.steps.map((s, i) => '    ' + X.card(`<div class="step-icon" style="background:var(--${['sun', 'mint', 'sky'][i % 3]}-soft)">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${rich(s.text)}</p>`, { className: 'reveal' })).join('\n')}
   </div>
 </div></section>
 
 <section class="section alt"><div class="wrap">
   <div class="section-head split"><div><span class="eyebrow">강의 분야</span><h2 class="section-title">${rich(h.coursesTitle)}</h2></div><a class="text-link" href="/lectures">강의 분야 자세히 보기 →</a></div>
   <div class="grid grid-3">
-${lec.courses.map((c, i) => `    <a class="card course-card reveal" href="/lectures#course-${i + 1}"><div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span></div><h3>${esc(c.title)}</h3><p>${esc(c.short)}</p></a>`).join('\n')}
+${lec.courses.map((c, i) => '    ' + X.clickableCard(`<div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span></div><h3>${esc(c.title)}</h3><p>${esc(c.short)}</p>`, { label: c.title, href: `/lectures#course-${i + 1}`, className: 'course-card reveal' })).join('\n')}
   </div>
 </div></section>
 
@@ -129,13 +132,13 @@ function about(a) {
     <span class="eyebrow">수업 철학</span>
     <p class="quote">${rich(a.quote)}</p>
     <div class="body">${paras(a.body).map(p => `<p>${rich(p)}</p>`).join('')}</div>
-    <div class="btn-row" style="margin-top:28px"><a class="btn btn-primary" href="/contact">강의 문의하기</a><a class="btn btn-ghost" href="/reviews">강의후기 보기</a></div>
+    <div class="btn-row" style="margin-top:28px">${X.button({ label: '강의 문의하기', href: '/contact' })}${X.button({ label: '강의후기 보기', href: '/reviews', variant: 'secondary' })}</div>
   </div>
 </div></section>
 <section class="section alt"><div class="wrap grid grid-2">
-${a.groups.map(g => `  <div class="card reveal"><h2><span aria-hidden="true">${esc(g.icon)}</span> ${esc(g.title)}</h2><ul class="timeline">
+${a.groups.map(g => '  ' + X.card(`<h2><span aria-hidden="true">${esc(g.icon)}</span> ${esc(g.title)}</h2><ul class="timeline">
 ${g.items.map(it => `    <li><span class="when">${esc(it.when)}</span><div><strong>${esc(it.title)}</strong>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</div></li>`).join('\n')}
-  </ul></div>`).join('\n')}
+  </ul>`, { className: 'reveal' })).join('\n')}
 </div></section>
 ${cta(a.cta, '/lectures')}`;
 }
@@ -143,12 +146,11 @@ ${cta(a.cta, '/lectures')}`;
 function lectures(l) {
   return `${pageHero('강의', l.hero)}
 <section class="section"><div class="wrap grid grid-2">
-${l.courses.map((c, i) => `  <article class="card course-card reveal" id="course-${i + 1}">
+${l.courses.map((c, i) => '  ' + X.card(`
     <div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span></div>
     <h3>${esc(c.title)}</h3><p>${rich(c.desc)}</p>
     <ul>${lines(c.points).map(p => `<li>${esc(p)}</li>`).join('')}</ul>
-    ${c.meta ? `<p class="meta">${esc(c.meta)}</p>` : ''}
-  </article>`).join('\n')}
+    ${c.meta ? `<p class="meta">${esc(c.meta)}</p>` : ''}`, { className: 'course-card reveal', id: `course-${i + 1}` })).join('\n')}
 </div></section>
 <section class="section alt"><div class="wrap">
   <div class="section-head center"><span class="eyebrow">${esc(l.audience.eyebrow)}</span><h2 class="section-title">${rich(l.audience.title)}</h2></div>
@@ -174,6 +176,7 @@ const gallerySection = g => `<section class="gallery" id="gallery" aria-labelled
     <p class="gallery-tip">사진을 누르면 크게 볼 수 있어요.</p>
   </div>
   <div id="field-gallery"></div>
+  <div class="gallery-toggle-wrap" hidden>${X.button({ label: '⏸ 움직임 멈추기', variant: 'secondary', size: 'md', className: 'gallery-toggle' })}</div>
   <script type="application/json" id="gallery-data">${JSON.stringify(g.items).replace(/</g, '\\u003c')}</script>
   <dialog class="lightbox" id="lightbox" aria-labelledby="lb-title">
     <button class="lb-close" type="button" aria-label="닫기">✕</button>
@@ -206,24 +209,23 @@ ${cta(p.cta, '/contact')}`;
 function reviews(r) {
   return `${pageHero('강의후기', r.hero)}
 <section class="section"><div class="wrap">
-  <div class="card empty-state">
+  ${X.card(`
     <span class="empty-icon" aria-hidden="true">💬</span>
     <h2>${rich(r.empty.title)}</h2>
-    <p>${rich(r.empty.text)}</p>
-  </div>
+    <p>${rich(r.empty.text)}</p>`, { className: 'empty-state', padding: 10, elevation: 'none' })}
 </div></section>`;
 }
 
 function materials(m) {
   return `${pageHero('수업자료', m.hero)}
 <section class="section"><div class="wrap">
-  <form class="card lock-card" id="materials-form" novalidate>
+  ${X.card(`<form id="materials-form" novalidate>
     <div class="field"><label for="class-select">어떤 수업을 들으셨나요?</label><select id="class-select" name="classId" required><option value="">목록을 불러오는 중…</option></select></div>
     <div class="field"><label for="class-pw">수업 비밀번호</label><input id="class-pw" name="password" type="password" autocomplete="off" required><span class="hint">비밀번호를 잊으셨다면 강사에게 문의해 주세요.</span></div>
-    <button class="btn btn-primary" type="submit" style="width:100%">자료 열기</button>
+    ${X.button({ label: '자료 열기', type: 'submit', width: '100%' })}
     <p class="form-msg" role="status" aria-live="polite"></p>
     <div id="materials-result"></div>
-  </form>
+  </form>`, { className: 'lock-card' })}
 </div></section>`;
 }
 
@@ -231,11 +233,11 @@ function contact(site, c) {
   return `${pageHero('강의 문의', c.hero)}
 <section class="section"><div class="wrap contact-grid">
   <div class="contact-side">
-    <div class="card"><h2>📧 이메일</h2><p><a class="text-link" href="mailto:${esc(site.email)}?subject=%EA%B0%95%EC%9D%98%20%EB%AC%B8%EC%9D%98">${esc(site.email)}</a></p></div>
-    <div class="card"><h2>📝 블로그</h2><p>출강 현장과 수업 내용을 미리 볼 수 있어요.<br><a class="text-link" href="${esc(site.blog)}" target="_blank" rel="noopener">${esc(site.blogName)}</a></p></div>
-    <div class="card"><h2>🗂️ 이런 문의를 받아요</h2><p>${rich(c.inquiryTypes)}</p></div>
+    ${X.card(`<h2>📧 이메일</h2><p><a class="text-link" href="mailto:${esc(site.email)}?subject=%EA%B0%95%EC%9D%98%20%EB%AC%B8%EC%9D%98">${esc(site.email)}</a></p>`)}
+    ${X.card(`<h2>📝 블로그</h2><p>출강 현장과 수업 내용을 미리 볼 수 있어요.<br><a class="text-link" href="${esc(site.blog)}" target="_blank" rel="noopener">${esc(site.blogName)}</a></p>`)}
+    ${X.card(`<h2>🗂️ 이런 문의를 받아요</h2><p>${rich(c.inquiryTypes)}</p>`)}
   </div>
-  <form class="card" id="contact-form" data-success="${esc(c.success)}">
+  ${X.card(`<form id="contact-form" data-success="${esc(c.success)}">
     <div class="form-row">
       <div class="field"><label for="f-org">기관·단체명 <span class="req">*</span></label><input id="f-org" name="org" required autocomplete="organization"></div>
       <div class="field"><label for="f-name">담당자 성함 <span class="req">*</span></label><input id="f-name" name="name" required autocomplete="name"></div>
@@ -249,9 +251,9 @@ function contact(site, c) {
     <div class="field"><label for="f-msg">교육 목표·요청 사항</label><textarea id="f-msg" name="message" placeholder="장소, 대면/온라인, 기대하는 결과 등을 자유롭게 적어 주세요."></textarea></div>
     <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <label class="check"><input type="checkbox" name="agree" value="동의" required> <span>${esc(c.privacy)} <span class="req">*</span></span></label>
-    <button class="btn btn-primary" type="submit" style="width:100%">문의 보내기</button>
+    ${X.button({ label: '문의 보내기', type: 'submit', width: '100%' })}
     <p class="form-msg" role="status" aria-live="polite"></p>
-  </form>
+  </form>`)}
 </div></section>`;
 }
 
@@ -269,6 +271,7 @@ function build({ clean = true } = {}) {
     p = read('projects'), r = read('reviews'), c = read('contact'), m = read('materials');
   if (clean) fs.rmSync(OUT, { recursive: true, force: true });
   copyDir(path.join(ROOT, 'static'), OUT);
+  X.copyCss(OUT);
   const pages = {
     index: layout(site, { key: 'home', body: home(site, h, l, p) }),
     about: layout(site, { key: 'about', title: '소개', description: `${site.role} ${site.person}(${site.name})의 경력, 자격, 수업 철학.`, body: about(a) }),

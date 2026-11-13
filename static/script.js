@@ -53,9 +53,21 @@ document.querySelectorAll('[data-blog-cards]').forEach(async box => {
     if (!r.ok) throw new Error();
     const { posts } = await r.json();
     if (!posts.length) throw new Error();
-    box.innerHTML = posts.map(p => `<a class="card review-card blog-card" href="${esc(p.link)}" target="_blank" rel="noopener">
-      ${p.image ? `<img src="${esc(p.image)}" data-fallback="${esc(p.thumbnail)}" alt="" loading="lazy" referrerpolicy="no-referrer" width="550" height="550">` : '<span class="ph" aria-hidden="true"></span>'}
-      <div class="body"><span class="tag coral">${esc(p.category)} · ${esc(p.date)}</span><h3>${esc(p.title)}</h3>${p.summary ? `<p>${esc(p.summary)}</p>` : ''}<span class="more">후기 읽기 →</span></div></a>`).join('');
+    // 카드 틀(Astryx ClickableCard)은 빌드 때 <template id="blog-card-template">로 들어 있다
+    const tpl = document.getElementById('blog-card-template');
+    box.replaceChildren(...posts.map(p => {
+      const el = tpl.content.firstElementChild.cloneNode(true);
+      const a = el.querySelector('a');
+      a.href = p.link; a.rel = 'noopener'; a.setAttribute('aria-label', p.title);
+      const img = el.querySelector('img');
+      if (p.image) { img.src = p.image; img.dataset.fallback = p.thumbnail || ''; }
+      else img.replaceWith(Object.assign(document.createElement('span'), { className: 'ph' }));
+      el.querySelector('.tag').textContent = `${p.category} · ${p.date}`;
+      el.querySelector('h3').textContent = p.title;
+      const sum = el.querySelector('.body p');
+      if (p.summary) sum.textContent = p.summary; else sum.remove();
+      return el;
+    }));
     box.querySelectorAll('img[data-fallback]').forEach(img => img.addEventListener('error', () => { if (img.dataset.fallback && img.src !== img.dataset.fallback) img.src = img.dataset.fallback; }, { once: true }));
     if (status) status.remove();
   } catch {
@@ -79,16 +91,22 @@ if (galleryEl && GALLERY.length) {
   const idx = GALLERY.map((_, i) => i);
   const half = Math.ceil(idx.length / 2);
   const rowB = [...idx.slice(half), ...idx.slice(0, half)];
-  galleryEl.innerHTML = row(idx, false) + row(rowB, true) +
-    '<button class="btn btn-ghost gallery-toggle" type="button" aria-pressed="false">⏸ 움직임 멈추기</button>';
+  galleryEl.innerHTML = row(idx, false) + row(rowB, true);
 
   const section = galleryEl.closest('.gallery');
-  const toggle = galleryEl.querySelector('.gallery-toggle');
-  toggle.addEventListener('click', () => {
-    const paused = section.classList.toggle('paused');
-    toggle.setAttribute('aria-pressed', String(paused));
-    toggle.textContent = paused ? '▶ 다시 움직이기' : '⏸ 움직임 멈추기';
-  });
+  // 멈춤 버튼(Astryx Button)은 빌드 때 그려져 있고, 사진이 뜨면 보이게 한다
+  const toggleWrap = section.querySelector('.gallery-toggle-wrap');
+  const toggle = section.querySelector('.gallery-toggle');
+  if (toggle) {
+    toggleWrap.hidden = false;
+    toggle.setAttribute('aria-pressed', 'false');
+    const label = [...toggle.querySelectorAll('span')].find(sp => !sp.children.length && sp.textContent.trim());
+    toggle.addEventListener('click', () => {
+      const paused = section.classList.toggle('paused');
+      toggle.setAttribute('aria-pressed', String(paused));
+      label.textContent = paused ? '▶ 다시 움직이기' : '⏸ 움직임 멈추기';
+    });
+  }
 
   const lb = document.getElementById('lightbox');
   let cur = 0;
