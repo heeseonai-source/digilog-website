@@ -72,7 +72,7 @@ const cta = (c, href, dark) => `<section class="section"${dark ? ' style="paddin
 
 // 블로그 출강후기 큰 카드 틀 — script.js가 복제해서 글 내용을 채운다
 const BLOG_CARD_TEMPLATE = `<template id="blog-card-template">${X.clickableCard(
-  '<img alt="" loading="lazy" referrerpolicy="no-referrer" width="550" height="550"><div class="body"><span class="tag coral"></span><h3></h3><p></p><span class="more">후기 읽기 →</span></div>',
+  '<img alt="" loading="lazy" referrerpolicy="no-referrer" width="550" height="550"><div class="body"><h3></h3><p></p><span class="more">후기 읽기 →</span></div>',
   { label: '출강 후기', href: '#', target: '_blank', className: 'review-card blog-card', padding: 0 })}</template>`;
 
 /* ---------------- 페이지 ---------------- */

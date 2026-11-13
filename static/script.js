@@ -62,7 +62,6 @@ document.querySelectorAll('[data-blog-cards]').forEach(async box => {
       const img = el.querySelector('img');
       if (p.image) { img.src = p.image; img.dataset.fallback = p.thumbnail || ''; }
       else img.replaceWith(Object.assign(document.createElement('span'), { className: 'ph' }));
-      el.querySelector('.tag').textContent = `${p.category} · ${p.date}`;
       el.querySelector('h3').textContent = p.title;
       const sum = el.querySelector('.body p');
       if (p.summary) sum.textContent = p.summary; else sum.remove();

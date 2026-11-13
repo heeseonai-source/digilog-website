@@ -195,6 +195,8 @@ main{display:block}
 
 /* ---------- 후기 ---------- */
 .review-card{overflow:hidden;display:flex;flex-direction:column}
+/* Astryx ClickableCard는 React 클릭 처리로 이동하는데 이 사이트엔 React가 없어서, 숨은 링크를 카드 전체로 펼쳐 누르면 바로 이동하게 한다 */
+.astryx-clickable-card > a:first-child{inset:0;width:auto;height:auto;margin:0;clip:auto;overflow:visible;z-index:1;border-radius:inherit}
 .review-card img{aspect-ratio:4/3;object-fit:cover;width:100%}
 .review-card .body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
 .review-card h3{font-size:19px}
