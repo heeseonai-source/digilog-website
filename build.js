@@ -33,15 +33,16 @@ function layout(site, { key, title, description, body, noindex }) {
 <meta name="description" content="${esc(description || site.description)}">
 ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta property="og:title" content="${esc(fullTitle)}"><meta property="og:description" content="${esc(description || site.description)}"><meta property="og:image" content="${esc(site.shareImage)}"><meta property="og:type" content="website">
 <meta name="theme-color" content="#FFFFFF">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%239E2A2B'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-family='Arial' font-weight='700' font-size='24' fill='%23fff'%3Ed%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg"><link rel="icon" type="image/png" href="/assets/brand/favicon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;700&display=swap">
 ${X.CSS_LINKS}
 <link rel="stylesheet" href="/style.css"><script src="/script.js" defer></script>
 </head>
 <body data-page="${key}" data-email="${esc(site.email)}" data-blog-url="${esc(site.blog)}">
 <a class="skip-link" href="#main">본문 바로가기</a>
 <header class="site-header"><div class="wrap">
-  <a class="logo" href="/" aria-label="${esc(site.name)} ${esc(site.person)} 홈"><img class="logo-img" src="/assets/brand/digilog-logo.svg" alt="DIGILOG 노희선" width="510" height="142"></a>
+  <a class="logo" href="/" aria-label="DIGILOG ${esc(site.person)} 홈">${BRAND_SYMBOL}<span><span class="brand-word">DIGI<span>LOG</span></span><small>${esc(site.person)}</small></span></a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">메뉴</button>
   <nav class="nav" id="site-nav" aria-label="주요 메뉴">${nav}<a class="nav-cta" href="/contact"${key === 'contact' ? ' aria-current="page"' : ''}>강의 문의</a></nav>
 </div></header>
@@ -59,11 +60,66 @@ ${BLOG_CARD_TEMPLATE}
 `;
 }
 
-const pageHero = (eyebrow, h) => `<section class="page-hero"><div class="wrap">
-  <span class="eyebrow">${esc(eyebrow)}</span>
-  <h1>${rich(h.title)}</h1>
-  <p>${rich(h.lead)}</p>
+// 로고 심볼 (d 모양 + 피치색 픽셀 눈) — 헤더에 인라인으로 넣는다
+const BRAND_SYMBOL = '<svg width="40" height="40" viewBox="-2 2 94 94" aria-hidden="true"><circle cx="42" cy="63" r="27" fill="#4A3F3A"/><rect x="58" y="8" width="17" height="82" rx="8.5" fill="#4A3F3A"/><rect x="33" y="54" width="18" height="18" rx="2" fill="#FEC89A"/><rect x="16" y="22" width="10" height="10" rx="1.5" fill="#FEC5BB"/></svg>';
+
+// 캐릭터 이미지 (static/assets/character/) — 크기는 원본 픽셀
+const CHAR = '/assets/character/';
+const POSES = {
+  wave: [388, 742], point: [224, 398], present: [319, 399], think: [196, 399], cheer: [272, 406],
+  book: [201, 265], camera: [253, 250], headset: [257, 255], laptop: [311, 237],
+};
+const poseImg = (name, attrs = '') => `<img src="${CHAR}pose_${name}.webp" width="${POSES[name][0]}" height="${POSES[name][1]}"${attrs}>`;
+
+/** 서브페이지 상단: 제목 왼쪽, 캐릭터 포즈 오른쪽 */
+const pageHero = (eyebrow, h, pose) => `<section class="page-hero"><div class="wrap page-hero-grid">
+  <div>
+    <span class="eyebrow">${esc(eyebrow)}</span>
+    <h1>${rich(h.title)}</h1>
+    <p>${rich(h.lead)}</p>
+  </div>
+  ${pose ? `<div class="page-hero-pose" aria-hidden="true">${poseImg(pose, ' alt=""')}</div>` : ''}
 </div></section>`;
+
+// 홈 히어로 장면: 포즈 → 말풍선 대사 (3.6초마다 다음 장면)
+const HERO_SCENES = [
+  { id: 'wave', step: 'HELLO', label: '인사', text: '안녕하세요! 디지로그쌤 노희선이에요.', alt: '손을 흔들며 인사하는 디지로그쌤 캐릭터' },
+  { id: 'point', step: 'STEP 01', label: '눈높이', text: '어려운 AI, 눈높이에 맞춰 설명해요.', alt: '손가락을 들고 설명하는 캐릭터' },
+  { id: 'present', step: 'STEP 02', label: '실습', text: '보기만 하지 말고, 직접 해봐요!', alt: 'AI 보드를 가리키며 수업하는 캐릭터' },
+  { id: 'think', step: 'TOGETHER', label: '함께 고민', text: '막히는 곳은 같이 고민해요.', alt: '턱을 괴고 고민하는 캐릭터' },
+  { id: 'cheer', step: 'STEP 03', label: '적용', text: '오늘 배운 AI, 내 일에 바로!', alt: '두 주먹을 들고 기뻐하는 캐릭터' },
+];
+// '이런 수업을 합니다' 띠에서 강의 순서대로 쓸 포즈
+const COURSE_POSES = ['headset', 'laptop', 'camera', 'present', 'book', 'think'];
+
+const heroStage = () => `<div class="hero-stage" id="hero-stage" role="group" aria-label="디지로그쌤 캐릭터 애니메이션">
+    <div class="hero-blob" aria-hidden="true"></div>
+    <div id="hero-pixels" aria-hidden="true"></div>
+    <div class="hero-prop p-ai" aria-hidden="true"><img src="${CHAR}icon_ai.webp" alt="" width="122" height="118"></div>
+    <div class="hero-prop p-bulb" aria-hidden="true"><img src="${CHAR}icon_bulb.webp" alt="" width="89" height="108"></div>
+    <div class="hero-prop p-coffee" aria-hidden="true"><img src="${CHAR}icon_coffee.webp" alt="" width="97" height="130"></div>
+    <div class="hero-prop p-laptop" aria-hidden="true"><img src="${CHAR}icon_laptop.webp" alt="" width="212" height="128"></div>
+    <div class="hero-floor" aria-hidden="true"></div>
+    <div class="hero-actor" id="hero-actor" data-scene="${HERO_SCENES[0].id}">
+      <div class="hero-bob">
+${HERO_SCENES.map((s, i) => `        ${poseImg(s.id, ` class="hero-pose ${s.id}${i === 0 ? ' on' : ''}" data-scene="${s.id}" alt="${esc(s.alt)}"${i === 0 ? ' fetchpriority="high"' : ''}`)}`).join('\n')}
+      </div>
+    </div>
+    <div class="hero-q" aria-hidden="true">?</div>
+    <p class="hero-bubble" id="hero-bubble" aria-live="polite"><span class="step" id="hero-step">${HERO_SCENES[0].step}</span><span id="hero-say">${esc(HERO_SCENES[0].text)}</span><span class="hero-caret" aria-hidden="true"></span></p>
+    <div class="hero-dots" role="group" aria-label="장면 선택">
+${HERO_SCENES.map((s, i) => `      <button type="button" data-go="${i}" aria-pressed="${i === 0}">${esc(s.label)}</button>`).join('\n')}
+    </div>
+    <script type="application/json" id="hero-scenes">${JSON.stringify(HERO_SCENES.map(({ id, step, text }) => ({ id, step, text }))).replace(/</g, '\\u003c')}</script>
+  </div>`;
+
+const courseStrip = (title, courses) => {
+  const cards = dup => courses.map((c, i) => `<a class="hero-card" href="/lectures#course-${i + 1}"${dup ? ' aria-hidden="true" tabindex="-1"' : ''}>${poseImg(COURSE_POSES[i % COURSE_POSES.length], ' alt="" loading="lazy"')}<b>${esc(c.title)}</b><span>${esc(c.short)}</span></a>`).join('');
+  return `<section class="hero-strip" aria-labelledby="strip-title">
+  <div class="wrap hero-strip-head"><h2 id="strip-title">${plain(title)}</h2><a class="text-link" href="/lectures">강의 분야 자세히 보기 →</a></div>
+  <div class="hero-track">${cards(false)}${cards(true)}</div>
+</section>`;
+};
 
 const cta = (c, href, dark) => `<section class="section"${dark ? ' style="padding-top:0"' : ''}><div class="wrap"><div class="cta">
   <div><h2>${rich(c.title)}</h2><p>${rich(c.text)}</p></div>
@@ -84,12 +140,10 @@ function home(site, h, lec, rev) {
     <p class="lead">${rich(h.hero.lead)}</p>
     <div class="btn-row">${X.button({ label: '기관·단체 강의 문의', href: '/contact' })}${X.button({ label: '강의 분야 보기', href: '/lectures', variant: 'secondary' })}</div>
   </div>
-  <div class="hero-photo">
-    <img src="${esc(h.hero.photo)}" width="1122" height="1402" alt="${esc(h.hero.photoAlt)}" fetchpriority="high">
-    ${h.hero.badgeTop ? `<div class="hero-badge b2"><span class="dot" aria-hidden="true"></span>${esc(h.hero.badgeTop)}</div>` : ''}
-    ${h.hero.badgeBottomText ? `<div class="hero-badge b1"><b>${esc(h.hero.badgeBottomNumber)}</b>${esc(h.hero.badgeBottomText)}</div>` : ''}
-  </div>
+  ${heroStage()}
 </div></section>
+
+${courseStrip(h.coursesTitle, lec.courses)}
 
 <div class="wrap"><div class="stats" aria-label="주요 숫자">
 ${h.stats.map(s => `  <div class="stat"><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`).join('\n')}
@@ -103,13 +157,6 @@ ${h.method.steps.map((s, i) => '    ' + X.card(`<div class="step-icon" style="ba
 </div></section>
 
 <section class="section alt"><div class="wrap">
-  <div class="section-head split"><div><span class="eyebrow">강의 분야</span><h2 class="section-title">${rich(h.coursesTitle)}</h2></div><a class="text-link" href="/lectures">강의 분야 자세히 보기 →</a></div>
-  <div class="grid grid-3">
-${lec.courses.map((c, i) => '    ' + X.clickableCard(`<div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span></div><h3>${esc(c.title)}</h3><p>${esc(c.short)}</p>`, { label: c.title, href: `/lectures#course-${i + 1}`, className: 'course-card reveal' })).join('\n')}
-  </div>
-</div></section>
-
-<section class="section"><div class="wrap">
   <div class="section-head split"><div><span class="eyebrow">블로그</span><h2 class="section-title">${rich(h.blogTitle)}</h2></div><a class="text-link" href="${esc(site.blog)}" target="_blank" rel="noopener">네이버 블로그 가기 →</a></div>
   <ul class="blog-list" data-blog data-limit="6"></ul>
   <p class="blog-status">최신 글을 불러오는 중이에요…</p>
@@ -119,7 +166,7 @@ ${cta(h.cta, '/contact')}`;
 }
 
 function about(a) {
-  return `${pageHero('소개', a.hero)}
+  return `${pageHero('소개', a.hero, 'point')}
 <section class="section"><div class="wrap about-grid">
   <img src="${esc(a.photo)}" width="1122" height="1402" alt="생성형 AI 강사 프로필 사진" loading="lazy">
   <div>
@@ -138,7 +185,7 @@ ${cta(a.cta, '/lectures')}`;
 }
 
 function lectures(l) {
-  return `${pageHero('강의', l.hero)}
+  return `${pageHero('강의', l.hero, 'present')}
 <section class="section"><div class="wrap grid grid-2">
 ${l.courses.map((c, i) => '  ' + X.card(`
     <div class="top"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="tag${tagClass(c.color)}">${esc(c.tag)}</span></div>
@@ -181,7 +228,7 @@ const gallerySection = g => `<section class="gallery" id="gallery" aria-labelled
 </section>`;
 
 function projects(p) {
-  return `${pageHero('프로젝트 · 출강 이력', p.hero)}
+  return `${pageHero('프로젝트 · 출강 이력', p.hero, 'camera')}
 ${gallerySection(p.gallery)}
 <section class="section alt"><div class="wrap">
   <div class="section-head"><span class="eyebrow">출강 이력</span><h2 class="section-title">${rich(p.history.title)}</h2><p class="section-lead">${rich(p.history.lead)}</p></div>
@@ -201,7 +248,7 @@ ${cta(p.cta, '/contact')}`;
 }
 
 function reviews(r) {
-  return `${pageHero('강의후기', r.hero)}
+  return `${pageHero('강의후기', r.hero, 'cheer')}
 <section class="section"><div class="wrap">
   ${X.card(`
     <span class="empty-icon" aria-hidden="true">💬</span>
@@ -211,7 +258,7 @@ function reviews(r) {
 }
 
 function materials(m) {
-  return `${pageHero('수업자료', m.hero)}
+  return `${pageHero('수업자료', m.hero, 'book')}
 <section class="section"><div class="wrap">
   ${X.card(`<form id="materials-form" novalidate>
     <div class="field"><label for="class-select">어떤 수업을 들으셨나요?</label><select id="class-select" name="classId" required><option value="">목록을 불러오는 중…</option></select></div>
@@ -224,7 +271,7 @@ function materials(m) {
 }
 
 function contact(site, c) {
-  return `${pageHero('강의 문의', c.hero)}
+  return `${pageHero('강의 문의', c.hero, 'headset')}
 <section class="section"><div class="wrap contact-grid">
   <div class="contact-side">
     ${X.card(`<h2>📧 이메일</h2><p><a class="text-link" href="mailto:${esc(site.email)}?subject=%EA%B0%95%EC%9D%98%20%EB%AC%B8%EC%9D%98">${esc(site.email)}</a></p>`)}

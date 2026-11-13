@@ -18,10 +18,10 @@ const CTA = G('cta', '맨 아래 안내 상자', [T('title', '제목'), T('text'
 
 const SCHEMA = {
   home: { label: '홈', view: '/', notice: '홈의 <b>강의 분야 카드</b>는 「강의」에서, <b>최근 출강 카드 3개</b>는 블로그 「출강후기」 최신 글 3개가 자동으로 보여요.', fields: [
-    G('hero', '첫 화면', [T('eyebrow', '작은 머리말'), R('title', '큰 제목'), R('lead', '설명'), IMG('photo', '프로필 사진'), T('photoAlt', '사진 설명 (화면에 안 보임, 검색·음성 안내용)'), T('badgeTop', '사진 위 배지'), T('badgeBottomNumber', '사진 아래 배지 숫자'), T('badgeBottomText', '사진 아래 배지 글자')]),
+    G('hero', '첫 화면', [T('eyebrow', '작은 머리말'), R('title', '큰 제목 (*강조* 부분에 형광펜 밑줄)'), R('lead', '설명')]),
     L('stats', '숫자 4칸', [T('value', '숫자'), T('label', '설명')], '숫자'),
     G('method', '수업 방식', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), L('steps', '단계', [T('icon', '이모지'), T('title', '제목'), A('text', '설명')], '단계')]),
-    T('coursesTitle', '강의 분야 제목'),
+    T('coursesTitle', '흐르는 강의 띠 제목'),
     T('blogTitle', '블로그 영역 제목'),
     CTA,
   ] },

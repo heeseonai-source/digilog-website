@@ -225,3 +225,71 @@ if (contactForm) {
     } finally { btn.disabled = false; }
   });
 }
+
+/* ---------- 홈 히어로: 움직이는 캐릭터 (장면 데이터는 #hero-scenes) ---------- */
+(() => {
+  const stage = document.getElementById('hero-stage');
+  if (!stage) return;
+  let scenes = [];
+  try { scenes = JSON.parse(document.getElementById('hero-scenes').textContent); } catch {}
+  if (!scenes.length) return;
+  const actor = document.getElementById('hero-actor');
+  const say = document.getElementById('hero-say');
+  const step = document.getElementById('hero-step');
+  const bubble = document.getElementById('hero-bubble');
+  const poses = actor.querySelectorAll('.hero-pose');
+  const dots = stage.querySelectorAll('[data-go]');
+  const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const HOLD = 3600;
+  let cur = 0, timer = null, typeT = null;
+
+  const type = text => {
+    clearTimeout(typeT);
+    if (reduce) { say.textContent = text; return; }
+    say.textContent = '';
+    let i = 0;
+    const tick = () => { say.textContent = text.slice(0, ++i); if (i < text.length) typeT = setTimeout(tick, 55); };
+    tick();
+  };
+  const show = n => {
+    const s = scenes[n];
+    poses.forEach(p => {
+      if (p.dataset.scene === s.id) { p.classList.remove('off', 'on'); void p.offsetWidth; p.classList.add('on'); }
+      else if (p.classList.contains('on')) { p.classList.remove('on'); p.classList.add('off'); }
+    });
+    actor.dataset.scene = s.id;
+    step.textContent = s.step;
+    bubble.classList.remove('swap'); void bubble.offsetWidth; bubble.classList.add('swap');
+    type(s.text);
+    dots.forEach(d => d.setAttribute('aria-pressed', String(Number(d.dataset.go) === n)));
+    cur = n;
+  };
+  const play = () => { clearInterval(timer); timer = setInterval(() => show((cur + 1) % scenes.length), HOLD); };
+  dots.forEach(d => d.addEventListener('click', () => { show(Number(d.dataset.go)); if (!reduce) play(); }));
+
+  if (!reduce) {
+    // 떠오르는 파스텔 픽셀 (네모 → 동그라미)
+    const box = document.getElementById('hero-pixels');
+    const cols = ['#FEC89A', '#FEC5BB', '#FCD5CE', '#D8E2DC', '#FEC89A'];
+    for (let k = 0; k < 14; k++) {
+      const e = document.createElement('i');
+      e.className = 'hero-px';
+      e.style.left = (8 + Math.random() * 84) + '%';
+      e.style.background = cols[k % cols.length];
+      const sz = 8 + Math.random() * 10;
+      e.style.width = e.style.height = sz + 'px';
+      e.style.setProperty('--t', (5 + Math.random() * 5) + 's');
+      e.style.setProperty('--dl', (-Math.random() * 8) + 's');
+      box.appendChild(e);
+    }
+    // 마우스를 따라 소품이 살짝 움직임
+    const props = stage.querySelectorAll('.hero-prop');
+    stage.addEventListener('pointermove', ev => {
+      const r = stage.getBoundingClientRect();
+      const x = (ev.clientX - r.left) / r.width - .5, y = (ev.clientY - r.top) / r.height - .5;
+      props.forEach((p, i) => { const f = i % 2 ? 14 : 22; p.style.transform = `translate(${-x * f}px,${-y * f}px)`; });
+    });
+    show(0);
+    play();
+  }
+})();

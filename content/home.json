@@ -1,13 +1,8 @@
 {
   "hero": {
-    "eyebrow": "👋 생성형 AI 강사 · 디지로그쌤",
+    "eyebrow": "생성형 AI 강사 · 디지로그쌤",
     "title": "어려운 AI,\n*내 일에* 바로.",
-    "lead": "처음 배우는 분도 스스로 해낼 수 있도록,\n눈높이 설명 → 직접 실습 → 내 일에 적용까지 함께합니다.",
-    "photo": "/assets/no-heeseon-profile.webp",
-    "photoAlt": "웃으며 카메라를 바라보는 생성형 AI 강사 노희선",
-    "badgeTop": "오늘두AI 소속 강사",
-    "badgeBottomNumber": "5종",
-    "badgeBottomText": "강사 자격 보유"
+    "lead": "처음 배우는 분도 스스로 해낼 수 있도록,\n눈높이 설명 → 직접 실습 → 내 일에 적용까지 함께합니다."
   },
   "stats": [
     {
