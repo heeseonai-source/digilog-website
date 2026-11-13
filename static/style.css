@@ -8,7 +8,7 @@
   --muted-teal:#81B29A;
   --apricot-cream:#F2CC8F;
   /* 팔레트에서 뽑은 역할별 색 */
-  --bg:#FAF8EF;
+  --bg:#FFFFFF;
   --surface:#FFFFFF;
   --ink:var(--twilight-indigo);     /* 글자·무게감 */
   --muted:#62657E;
@@ -46,7 +46,7 @@ p{margin:0}
 .skip-link:focus{left:16px}
 
 /* ---------- 헤더 ---------- */
-.site-header{position:sticky;top:0;z-index:50;background:rgba(250,248,239,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.site-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .site-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:19px;line-height:1.2}
 .logo-mark{width:38px;height:38px;border-radius:12px;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:19px;flex:none}
@@ -69,7 +69,7 @@ p{margin:0}
 /* ---------- 공통 요소 ---------- */
 main{display:block}
 .section{padding:88px 0}
-.section.alt{background:var(--eggshell)}
+.section.alt{background:var(--bg);border-block:1px solid var(--line)}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--coral-dark);background:var(--coral-soft);padding:6px 14px;border-radius:999px;margin-bottom:16px}
 .section-title{font-size:clamp(28px,4vw,40px);font-weight:800;margin-bottom:14px}
 .section-lead{color:var(--muted);font-size:clamp(17px,2vw,19px);max-width:660px}
@@ -97,12 +97,12 @@ main{display:block}
 .text-link:hover{border-color:var(--coral)}
 
 /* ---------- 서브페이지 상단 ---------- */
-.page-hero{padding:72px 0 56px;background:radial-gradient(circle at 85% 20%,var(--sun-soft) 0,transparent 45%),radial-gradient(circle at 10% 90%,var(--mint-soft) 0,transparent 40%)}
+.page-hero{padding:72px 0 56px;}
 .page-hero h1{font-size:clamp(34px,5vw,52px);font-weight:800;margin-bottom:14px}
 .page-hero p{color:var(--muted);font-size:clamp(17px,2vw,20px);max-width:660px}
 
 /* ---------- 홈 히어로 ---------- */
-.hero{padding:64px 0 96px;background:radial-gradient(circle at 90% 10%,var(--sun-soft) 0,transparent 40%),radial-gradient(circle at 0% 100%,var(--coral-soft) 0,transparent 45%)}
+.hero{padding:64px 0 96px;}
 .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(38px,6vw,62px);font-weight:800;margin-bottom:20px}
 .hero h1 em{font-style:normal;color:var(--coral-strong)}
@@ -216,7 +216,7 @@ main{display:block}
 .blog-status{color:var(--muted);font-size:15px}
 
 /* ---------- 현장 갤러리 (사진 리본) ---------- */
-.gallery{padding:72px 0 80px;overflow:hidden;background-color:#FBFAF3;background-image:linear-gradient(rgba(224,122,95,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(224,122,95,.12) 1px,transparent 1px);background-size:32px 32px;border-block:1px solid var(--line)}
+.gallery{padding:72px 0 80px;overflow:hidden;background-color:var(--bg);background-size:32px 32px;border-block:1px solid var(--line)}
 .gallery-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:36px}
 .gallery-tip{color:var(--muted);font-size:15px}
 .ribbon{overflow:hidden;padding:14px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
