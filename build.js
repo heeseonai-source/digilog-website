@@ -33,7 +33,7 @@ function layout(site, { key, title, description, body, noindex }) {
 <meta name="description" content="${esc(description || site.description)}">
 ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta property="og:title" content="${esc(fullTitle)}"><meta property="og:description" content="${esc(description || site.description)}"><meta property="og:image" content="${esc(site.shareImage)}"><meta property="og:type" content="website">
 <meta name="theme-color" content="#FFFFFF">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23E07A5F'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-family='Arial' font-weight='700' font-size='24' fill='%23fff'%3Ed%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%239E2A2B'/%3E%3Ctext x='20' y='29' text-anchor='middle' font-family='Arial' font-weight='700' font-size='24' fill='%23fff'%3Ed%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 ${X.CSS_LINKS}
 <link rel="stylesheet" href="/style.css"><script src="/script.js" defer></script>
@@ -41,7 +41,7 @@ ${X.CSS_LINKS}
 <body data-page="${key}" data-email="${esc(site.email)}" data-blog-url="${esc(site.blog)}">
 <a class="skip-link" href="#main">본문 바로가기</a>
 <header class="site-header"><div class="wrap">
-  <a class="logo" href="/" aria-label="${esc(site.name)} 홈"><span class="logo-mark" aria-hidden="true">d</span><span>${esc(site.name)}<small>${esc(site.role)} ${esc(site.person)}</small></span></a>
+  <a class="logo" href="/" aria-label="${esc(site.name)} ${esc(site.person)} 홈"><img class="logo-img" src="/assets/brand/digilog-logo.svg" alt="DIGILOG 노희선" width="510" height="142"></a>
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">메뉴</button>
   <nav class="nav" id="site-nav" aria-label="주요 메뉴">${nav}<a class="nav-cta" href="/contact"${key === 'contact' ? ' aria-current="page"' : ''}>강의 문의</a></nav>
 </div></header>
