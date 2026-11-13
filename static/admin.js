@@ -22,7 +22,6 @@ const SCHEMA = {
     L('stats', '숫자 4칸', [T('value', '숫자'), T('label', '설명')], '숫자'),
     G('method', '수업 방식', [T('eyebrow', '머리말'), R('title', '제목'), R('lead', '설명'), L('steps', '단계', [T('icon', '이모지'), T('title', '제목'), A('text', '설명')], '단계')]),
     T('coursesTitle', '강의 분야 제목'),
-    G('recent', '최근 출강', [R('title', '제목'), R('lead', '설명')]),
     T('blogTitle', '블로그 영역 제목'),
     CTA,
   ] },

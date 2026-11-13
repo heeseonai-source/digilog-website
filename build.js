@@ -110,12 +110,6 @@ ${lec.courses.map((c, i) => '    ' + X.clickableCard(`<div class="top"><span cla
 </div></section>
 
 <section class="section"><div class="wrap">
-  <div class="section-head split"><div><span class="eyebrow">최근 출강</span><h2 class="section-title">${rich(h.recent.title)}</h2><p class="section-lead">${rich(h.recent.lead)}</p></div><a class="text-link" href="/projects#stories">현장 이야기 전체 보기 →</a></div>
-  <div class="grid grid-3" data-blog-cards data-limit="3" data-category="출강후기"></div>
-  <p class="blog-status">최근 출강 이야기를 불러오는 중이에요…</p>
-</div></section>
-
-<section class="section alt"><div class="wrap">
   <div class="section-head split"><div><span class="eyebrow">블로그</span><h2 class="section-title">${rich(h.blogTitle)}</h2></div><a class="text-link" href="${esc(site.blog)}" target="_blank" rel="noopener">네이버 블로그 가기 →</a></div>
   <ul class="blog-list" data-blog data-limit="6"></ul>
   <p class="blog-status">최신 글을 불러오는 중이에요…</p>
