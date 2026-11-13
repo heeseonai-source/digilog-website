@@ -67,7 +67,7 @@ const pageHero = (eyebrow, h) => `<section class="page-hero"><div class="wrap">
 
 const cta = (c, href, dark) => `<section class="section"${dark ? ' style="padding-top:0"' : ''}><div class="wrap"><div class="cta">
   <div><h2>${rich(c.title)}</h2><p>${rich(c.text)}</p></div>
-  ${X.button({ label: c.button, href, variant: href.startsWith('/contact') ? 'primary' : 'secondary' })}
+  ${X.button({ label: c.button, href })}
 </div></div></section>`;
 
 // 블로그 출강후기 큰 카드 틀 — script.js가 복제해서 글 내용을 채운다
