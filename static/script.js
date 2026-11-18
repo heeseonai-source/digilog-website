@@ -178,7 +178,9 @@ if (matForm) {
   const msg = matForm.querySelector('.form-msg');
   const out = document.getElementById('materials-result');
   fetch('/api/materials').then(r => r.json()).then(({ classes }) => {
-    select.innerHTML = '<option value="">수업을 골라 주세요</option>' + classes.map(c => `<option value="${esc(c.id)}">${esc(c.title)}</option>`).join('');
+    select.innerHTML = classes.length
+      ? '<option value="">수업을 골라 주세요</option>' + classes.map(c => `<option value="${esc(c.id)}">${esc(c.title)}</option>`).join('')
+      : '<option value="">아직 열린 수업 자료가 없어요</option>';
     const want = new URLSearchParams(location.search).get('class');
     if (want) select.value = want;
   }).catch(() => { select.innerHTML = '<option value="">목록을 불러오지 못했어요</option>'; });
@@ -344,6 +346,13 @@ if (contactForm) {
 
   if (!form) return;
   const opened = Date.now();
+  // 수업 고르기: 누르면 펼쳐지고, 고르면 접히면서 고른 수업이 보인다
+  const picker = form.querySelector('#class-picker');
+  const picked = form.querySelector('#class-picked');
+  form.querySelectorAll('input[name="cls"]').forEach(r => r.addEventListener('change', () => {
+    picked.textContent = r.value; picker.classList.add('chosen'); picker.open = false;
+    picker.querySelector('summary').focus();
+  }));
   const text = form.querySelector('#rv-text');
   const count = form.querySelector('#rv-count');
   const msg = form.querySelector('.form-msg');
@@ -353,7 +362,7 @@ if (contactForm) {
     const fd = new FormData(form);
     const data = { cls: fd.get('cls') || '', text: String(fd.get('text') || '').trim(), name: String(fd.get('name') || '').trim(), website: fd.get('website') || '', t: opened };
     msg.className = 'form-msg';
-    if (!data.cls) { msg.classList.add('error'); msg.textContent = '들으신 수업을 골라 주세요.'; form.querySelector('.chip input')?.focus(); return; }
+    if (!data.cls) { msg.classList.add('error'); msg.textContent = '들으신 수업을 골라 주세요.'; picker.open = true; picker.querySelector('summary').focus(); return; }
     if (data.text.length < 5) { msg.classList.add('error'); msg.textContent = '후기를 5자 이상 적어 주세요.'; text.focus(); return; }
     const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true; msg.textContent = '메모를 붙이는 중이에요…';

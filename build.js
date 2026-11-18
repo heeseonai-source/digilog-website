@@ -252,11 +252,14 @@ function reviews(r) {
   <aside class="review-write">
     ${X.card(`<form id="review-form" novalidate data-success="${esc(form.success || '메모를 붙였어요. 고맙습니다!')}">
       <h2>✏️ ${esc(form.title || '후기 메모 남기기')}</h2>
-      <fieldset class="chip-group">
+      <fieldset class="class-pick">
         <legend>어떤 수업을 들으셨나요? <span class="req">*</span></legend>
-        <div class="chips">
-${classes.map((c, i) => `          <label class="chip"><input type="radio" name="cls" value="${esc(c)}"${i === 0 ? ' required' : ''}><span>${esc(c)}</span></label>`).join('\n')}
-        </div>
+        <details class="class-picker" id="class-picker">
+          <summary><span class="class-picked" id="class-picked">수업을 골라 주세요</span><span class="class-caret" aria-hidden="true"></span></summary>
+          <div class="class-options">
+${classes.map((c, i) => `            <label class="class-option"><input type="radio" name="cls" value="${esc(c)}"${i === 0 ? ' required' : ''}><span>${esc(c)}</span></label>`).join('\n')}
+          </div>
+        </details>
       </fieldset>
       <div class="field"><label for="rv-text">한 줄 후기 <span class="req">*</span></label>
         <textarea id="rv-text" name="text" maxlength="150" rows="4" required placeholder="예: 챗GPT로 안내문 만드는 법을 바로 써먹었어요!"></textarea>
