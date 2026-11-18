@@ -145,10 +145,6 @@ function home(site, h, lec, rev) {
 
 ${courseStrip(h.coursesTitle, lec.courses)}
 
-<div class="wrap"><div class="stats" aria-label="주요 숫자">
-${h.stats.map(s => `  <div class="stat"><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`).join('\n')}
-</div></div>
-
 <section class="section steps"><div class="wrap">
   <div class="section-head center"><span class="eyebrow">${esc(h.method.eyebrow)}</span><h2 class="section-title">${rich(h.method.title)}</h2><p class="section-lead">${rich(h.method.lead)}</p></div>
   <div class="grid grid-3">
@@ -196,7 +192,7 @@ ${l.courses.map((c, i) => '  ' + X.card(`
 <section class="section alt"><div class="wrap">
   <div class="section-head center"><span class="eyebrow">${esc(l.audience.eyebrow)}</span><h2 class="section-title">${rich(l.audience.title)}</h2></div>
   <ul class="audience-list">
-${l.audience.items.map(a => `    <li class="reveal"><span aria-hidden="true">${esc(a.icon)}</span>${esc(a.title)}<br><small style="color:var(--muted);font-weight:500">${esc(a.sub)}</small></li>`).join('\n')}
+${l.audience.items.map(a => `    <li class="reveal">${String(a.icon || '').startsWith('/') ? `<img class="audience-icon" src="${esc(a.icon)}" alt="" width="96" height="96" loading="lazy">` : `<span aria-hidden="true">${esc(a.icon)}</span>`}${esc(a.title)}<br><small style="color:var(--muted);font-weight:500">${esc(a.sub)}</small></li>`).join('\n')}
   </ul>
 </div></section>
 <section class="section"><div class="wrap">
