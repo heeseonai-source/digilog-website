@@ -208,6 +208,7 @@ main{display:block}
 .stat span{color:var(--muted);font-size:15px}
 @media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
 
+.step-img{display:block;width:80px;height:80px;margin:-8px 0 10px -8px}
 .step-icon{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:26px;margin-bottom:16px}
 .steps h3{font-size:21px;margin-bottom:8px}
 .steps p{color:var(--muted);font-size:16px}
@@ -389,3 +390,43 @@ textarea{min-height:140px;resize:vertical}
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
 .reveal.in{opacity:1;transform:none}
 .no-js .reveal{opacity:1;transform:none}
+
+/* ---------- 수강생 후기: 메모 보드 ---------- */
+.review-layout{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:36px;align-items:start}
+.review-write{position:sticky;top:90px}
+.review-form-card h2{font-size:21px;margin-bottom:16px}
+.chip-group{border:0;padding:0;margin:0 0 18px}
+.chip-group legend{font-weight:700;font-size:16px;margin-bottom:10px;padding:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative;cursor:pointer}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip span{display:inline-block;padding:8px 14px;border:1px solid var(--linen);border-radius:999px;background:#fff;font-size:14px;font-weight:600;line-height:1.35;color:var(--ink);transition:background .15s,border-color .15s}
+.chip:hover span{background:var(--petal)}
+.chip input:checked+span{background:var(--ink);border-color:var(--ink);color:var(--shell)}
+.chip input:focus-visible+span{outline:3px solid var(--peach);outline-offset:2px}
+.review-form-card textarea{min-height:110px}
+.review-form-card .field label small{font-weight:500;color:var(--muted)}
+.review-note{font-size:13px;color:var(--muted);margin:-4px 0 14px;line-height:1.6}
+.review-filter{margin-bottom:22px}
+.memo-board{list-style:none;margin:0;padding:6px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px 20px}
+.memo{position:relative;background:var(--memo,#FFEBDA);padding:26px 20px 18px;border-radius:4px 4px 18px 4px;box-shadow:0 10px 18px -12px rgba(74,63,58,.35);transform:rotate(var(--tilt,-1deg));display:flex;flex-direction:column;gap:12px;min-height:170px;transition:transform .2s}
+.memo:hover{transform:rotate(0) translateY(-3px)}
+.memo::before{content:"";position:absolute;top:-10px;left:50%;width:74px;height:22px;margin-left:-37px;background:rgba(255,255,255,.65);border:1px solid rgba(74,63,58,.08);transform:rotate(-3deg)}
+.memo p{font-size:16px;line-height:1.65;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
+.memo footer{margin-top:auto;font-size:13px;color:var(--muted);line-height:1.5}
+.memo footer b{color:var(--ink);font-weight:700}
+.memo:nth-child(5n+1){--memo:#FFEBDA;--tilt:-1.6deg}
+.memo:nth-child(5n+2){--memo:#FDE0DA;--tilt:1.2deg}
+.memo:nth-child(5n+3){--memo:#E3EBE5;--tilt:-.8deg}
+.memo:nth-child(5n+4){--memo:#FCE3DD;--tilt:1.8deg}
+.memo:nth-child(5n+5){--memo:#F6EEE6;--tilt:-1.2deg}
+.memo.new{animation:memo-in .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes memo-in{from{opacity:0;transform:translateY(-16px) rotate(-6deg) scale(.9)}}
+.memo-empty{border:2px dashed var(--linen);border-radius:var(--radius);padding:48px 24px;text-align:center;display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+.memo-empty b{color:var(--ink);font-size:20px}
+.memo-empty[hidden]{display:none}
+.memo-more{display:block;margin:28px auto 0;border:1px solid var(--linen);background:#fff;border-radius:999px;padding:10px 22px;font:inherit;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer}
+.memo-more:hover{background:var(--petal)}
+@media (max-width:900px){.review-layout{grid-template-columns:1fr}.review-write{position:static}}
+@media (max-width:480px){.memo-board{grid-template-columns:1fr 1fr;gap:20px 12px}.memo{padding:22px 14px 14px;min-height:150px}.memo p{font-size:15px}}
+.review-filter [hidden]{display:none}

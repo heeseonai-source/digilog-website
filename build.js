@@ -148,7 +148,7 @@ ${courseStrip(h.coursesTitle, lec.courses)}
 <section class="section steps"><div class="wrap">
   <div class="section-head center"><span class="eyebrow">${esc(h.method.eyebrow)}</span><h2 class="section-title">${rich(h.method.title)}</h2><p class="section-lead">${rich(h.method.lead)}</p></div>
   <div class="grid grid-3">
-${h.method.steps.map((s, i) => '    ' + X.card(`<div class="step-icon" style="background:var(--${['sun', 'mint', 'sky'][i % 3]}-soft)">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${rich(s.text)}</p>`, { className: 'reveal' })).join('\n')}
+${h.method.steps.map((s, i) => '    ' + X.card(`${String(s.icon || '').startsWith('/') ? `<img class="step-img" src="${esc(s.icon)}" alt="" width="80" height="80" loading="lazy">` : `<div class="step-icon" style="background:var(--${['sun', 'mint', 'sky'][i % 3]}-soft)">${esc(s.icon)}</div>`}<h3>${esc(s.title)}</h3><p>${rich(s.text)}</p>`, { className: 'reveal' })).join('\n')}
   </div>
 </div></section>
 
@@ -243,13 +243,41 @@ ${p.history.items.map(it => { const [label, cls] = STATUS[it.status] || STATUS.d
 ${cta(p.cta, '/contact')}`;
 }
 
+// 수강생 후기: 왼쪽(휴대폰은 위) 메모 쓰기, 오른쪽 메모 보드. 메모 목록은 script.js가 /api/reviews 에서 불러온다
 function reviews(r) {
+  const classes = (r.classes || []).map(c => String(c.name || '').trim()).filter(Boolean);
+  const form = r.form || {};
   return `${pageHero('강의후기', r.hero, 'cheer')}
-<section class="section"><div class="wrap">
-  ${X.card(`
-    <span class="empty-icon" aria-hidden="true">💬</span>
-    <h2>${rich(r.empty.title)}</h2>
-    <p>${rich(r.empty.text)}</p>`, { className: 'empty-state', padding: 10, elevation: 'none' })}
+<section class="section review-section"><div class="wrap review-layout">
+  <aside class="review-write">
+    ${X.card(`<form id="review-form" novalidate data-success="${esc(form.success || '메모를 붙였어요. 고맙습니다!')}">
+      <h2>✏️ ${esc(form.title || '후기 메모 남기기')}</h2>
+      <fieldset class="chip-group">
+        <legend>어떤 수업을 들으셨나요? <span class="req">*</span></legend>
+        <div class="chips">
+${classes.map((c, i) => `          <label class="chip"><input type="radio" name="cls" value="${esc(c)}"${i === 0 ? ' required' : ''}><span>${esc(c)}</span></label>`).join('\n')}
+        </div>
+      </fieldset>
+      <div class="field"><label for="rv-text">한 줄 후기 <span class="req">*</span></label>
+        <textarea id="rv-text" name="text" maxlength="150" rows="4" required placeholder="예: 챗GPT로 안내문 만드는 법을 바로 써먹었어요!"></textarea>
+        <span class="hint"><span id="rv-count">0</span>/150자</span></div>
+      <div class="field"><label for="rv-name">닉네임 <small>(선택)</small></label>
+        <input id="rv-name" name="name" maxlength="12" autocomplete="off" placeholder="비워 두면 '수강생'으로 보여요"></div>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="review-note">${esc(form.note || '')}</p>
+      ${X.button({ label: '메모 붙이기', type: 'submit', width: '100%' })}
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>`, { className: 'review-form-card' })}
+  </aside>
+  <div class="review-board-wrap">
+    <div class="filter review-filter" role="group" aria-label="수업별로 보기">
+      <button type="button" aria-pressed="true" data-cls="">전체</button>
+${classes.map(c => `      <button type="button" aria-pressed="false" data-cls="${esc(c)}">${esc(c)}</button>`).join('\n')}
+    </div>
+    <ul class="memo-board" id="memo-board" aria-live="polite"></ul>
+    <p class="blog-status" id="memo-status">메모를 불러오는 중이에요…</p>
+    <div class="memo-empty" id="memo-empty" hidden><b>${rich(r.empty.title)}</b><span>${rich(r.empty.text)}</span></div>
+  </div>
 </div></section>`;
 }
 

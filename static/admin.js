@@ -32,7 +32,7 @@ const SCHEMA = {
   lectures: { label: '강의', view: '/lectures', fields: [
     HERO,
     L('courses', '강의 분야', [T('title', '강의 이름'), T('tag', '꼬리표 (예: 입문)'), SEL('color', '꼬리표 색', COLORS), T('short', '한 줄 소개 (홈 카드용)'), R('desc', '설명'), A('points', '배우는 내용', '한 줄에 하나씩'), T('meta', '추천 대상')], '강의'),
-    G('audience', '수강 대상', [T('eyebrow', '머리말'), R('title', '제목'), L('items', '대상', [T('icon', '이모지'), T('title', '대상'), T('sub', '설명')], '대상')]),
+    G('audience', '수강 대상', [T('eyebrow', '머리말'), R('title', '제목'), L('items', '대상', [IMG('icon', '아이콘 이미지'), T('title', '대상'), T('sub', '설명')], '대상')]),
     G('format', '진행 안내 표', [T('title', '제목'), L('rows', '줄', [T('label', '항목'), R('value', '내용')], '줄')]),
     CTA,
   ] },
@@ -43,9 +43,11 @@ const SCHEMA = {
     G('stories', '현장별 이야기 (블로그 「출강후기」 글이 자동으로 카드가 돼요)', [T('title', '제목'), R('lead', '설명'), SEL('count', '보여줄 카드 수', [['6', '6개'], ['9', '9개'], ['12', '12개']])]),
     CTA,
   ] },
-  reviews: { label: '수강생 후기', view: '/reviews', notice: '지금은 비어 있는 페이지예요. 수강생이 직접 후기를 남기는 기능은 다음에 붙일 예정이에요.', fields: [
+  reviews: { label: '수강생 후기', view: '/reviews', notice: '수강생이 남긴 메모는 구글 시트 <b>「후기」 탭</b>에 쌓이고 바로 페이지에 보여요. 내리고 싶은 메모는 시트의 <b>숨기기</b> 칸에 아무 글자나 적으면 사라져요(1분쯤 걸려요).', fields: [
     HERO,
-    G('empty', '빈 화면 안내', [T('title', '제목'), A('text', '설명')]),
+    L('classes', '후기 받을 수업 (수강생이 고르는 목록, 위에 있을수록 앞에 보여요)', [T('name', '수업 이름')], '수업'),
+    G('form', '메모 쓰기 칸', [T('title', '제목'), A('note', '안내 문구'), T('success', '남긴 뒤 보여줄 문구')]),
+    G('empty', '메모가 하나도 없을 때', [T('title', '제목'), A('text', '설명')]),
   ] },
   classes: { label: '수업자료 목록', view: '/materials', root: 'list', notice: '수업마다 비밀번호를 정해요. 비밀번호는 <b>새로 정하거나 바꿀 때만</b> 입력하세요. 비워 두면 기존 비밀번호가 유지돼요. 자료는 3MB 이하 파일을 올리거나, 구글 드라이브 공유 링크를 붙여 넣으세요.', fields: [
     T('title', '수업 이름 (수강생에게 보임)'),

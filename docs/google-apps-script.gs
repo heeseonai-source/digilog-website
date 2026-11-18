@@ -1,22 +1,55 @@
 /**
- * 디지로그쌤 홈페이지 강의 문의 → 구글 시트 저장용 앱스 스크립트
+ * 디지로그쌤 홈페이지 → 구글 시트 저장용 앱스 스크립트
+ *  - 강의 문의  → '문의' 탭
+ *  - 수강생 후기 → '후기' 탭 (홈페이지에 바로 보임. 내리려면 '숨기기' 칸에 아무 글자나 적기)
  * 사용법은 docs/구글시트-연결방법.md 를 보세요.
  */
 const SECRET = ''; // 비워 두면 확인 안 함. 쓰려면 Vercel 환경변수 SHEET_SECRET 과 똑같이 맞춥니다 (2026-11-12 실제 배포본은 비워 둠)
 const NOTIFY_EMAIL = '';        // 새 문의가 오면 알림받을 메일 주소 (비워 두면 알림 없음)
 
+const out = (obj) => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+const clean = (v) => String(v || '').replace(/^[=+\-@]/, "'$&"); // 수식 주입 방지
+
+function reviewSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('후기') || ss.insertSheet('후기');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['작성일시', '수업', '닉네임', '내용', '숨기기']);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// 홈페이지가 후기 목록을 가져갈 때 (숨기기 칸이 빈 것만, 최신순)
+function doGet(e) {
+  const action = (e && e.parameter && e.parameter.action) || '';
+  if (action !== 'reviews') return out({ ok: true });
+  const sheet = reviewSheet();
+  const rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues() : [];
+  const tz = Session.getScriptTimeZone();
+  const reviews = rows
+    .filter(r => r[3] && !String(r[4]).trim())
+    .map(r => ({
+      date: r[0] instanceof Date ? Utilities.formatDate(r[0], tz, 'yyyy.MM.dd') : String(r[0]),
+      cls: String(r[1]).replace(/^'/, ''), name: String(r[2]).replace(/^'/, ''), text: String(r[3]).replace(/^'/, ''),
+    }))
+    .reverse()
+    .slice(0, 300);
+  return out({ ok: true, reviews });
+}
+
 function doPost(e) {
-  const out = (obj) => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
   try {
     const d = JSON.parse(e.postData.contents);
     if (SECRET && d.secret !== SECRET) return out({ ok: false, error: 'secret' });
+
+    if (d.type === 'review') return saveReview(d);
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('문의') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('문의');
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(['접수일시', '기관', '담당자', '연락처', '이메일', '교육대상', '인원', '희망일정', '관심주제', '내용', '처리상태']);
       sheet.setFrozenRows(1);
     }
-    const clean = (v) => String(v || '').replace(/^[=+\-@]/, "'$&"); // 수식 주입 방지
     sheet.appendRow([new Date(), d.org, d.name, d.phone, d.email, d.audience, d.size, d.date, d.topic, d.message, '신규'].map((v, i) => i === 0 ? v : clean(v)));
 
     if (NOTIFY_EMAIL) {
@@ -26,5 +59,26 @@ function doPost(e) {
     return out({ ok: true });
   } catch (err) {
     return out({ ok: false, error: String(err) });
+  }
+}
+
+function saveReview(d) {
+  const text = String(d.text || '').slice(0, 150);
+  if (text.length < 5) return out({ ok: false, error: 'short' });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = reviewSheet();
+    // 같은 내용이 최근 30개 안에 있으면 중복으로 보고 저장하지 않음
+    const last = sheet.getLastRow();
+    if (last > 1) {
+      const from = Math.max(2, last - 29);
+      const recent = sheet.getRange(from, 4, last - from + 1, 1).getValues().map(r => String(r[0]).replace(/^'/, ''));
+      if (recent.includes(text)) return out({ ok: false, error: 'duplicate' });
+    }
+    sheet.appendRow([new Date(), clean(d.cls).slice(0, 80), clean(d.name).slice(0, 12), clean(text), '']);
+    return out({ ok: true });
+  } finally {
+    lock.releaseLock();
   }
 }

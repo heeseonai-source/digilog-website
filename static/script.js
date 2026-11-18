@@ -293,3 +293,84 @@ if (contactForm) {
     play();
   }
 })();
+
+/* ---------- 수강생 후기: 메모 보드 (/api/reviews) ---------- */
+(() => {
+  const board = document.getElementById('memo-board');
+  const form = document.getElementById('review-form');
+  if (!board) return;
+  const status = document.getElementById('memo-status');
+  const empty = document.getElementById('memo-empty');
+  const filterBtns = document.querySelectorAll('.review-filter [data-cls]');
+  const PAGE = 24;
+  let all = [], cls = '', shown = PAGE;
+
+  const memo = (r, isNew) => {
+    const li = document.createElement('li');
+    li.className = 'memo' + (isNew ? ' new' : '');
+    const p = document.createElement('p'); p.textContent = r.text;
+    const f = document.createElement('footer');
+    const b = document.createElement('b'); b.textContent = r.name || '수강생';
+    f.append(b, document.createElement('br'), `${r.cls}${r.date ? ' · ' + r.date : ''}`);
+    li.append(p, f);
+    return li;
+  };
+  const render = newOne => {
+    // 메모가 있는 수업만 거르기 버튼으로 보여 준다
+    filterBtns.forEach(b => { b.hidden = !!b.dataset.cls && !all.some(r => r.cls === b.dataset.cls); });
+    const list = cls ? all.filter(r => r.cls === cls) : all;
+    board.replaceChildren(...list.slice(0, shown).map(r => memo(r, r === newOne)));
+    empty.hidden = list.length > 0;
+    document.getElementById('memo-more')?.remove();
+    if (list.length > shown) {
+      const more = document.createElement('button');
+      more.type = 'button'; more.id = 'memo-more'; more.className = 'memo-more pager-more';
+      more.textContent = `메모 더 보기 (${list.length - shown}개)`;
+      more.addEventListener('click', () => { shown += PAGE; render(); });
+      board.after(more);
+    }
+  };
+  filterBtns.forEach(btn => btn.addEventListener('click', () => {
+    cls = btn.dataset.cls; shown = PAGE;
+    filterBtns.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    render();
+  }));
+
+  fetch('/api/reviews').then(r => r.json()).then(d => {
+    all = d.reviews || [];
+    status.remove();
+    render();
+  }).catch(() => { status.textContent = '메모를 불러오지 못했어요. 잠시 후 새로고침해 주세요.'; });
+
+  if (!form) return;
+  const opened = Date.now();
+  const text = form.querySelector('#rv-text');
+  const count = form.querySelector('#rv-count');
+  const msg = form.querySelector('.form-msg');
+  text.addEventListener('input', () => { count.textContent = text.value.length; });
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = { cls: fd.get('cls') || '', text: String(fd.get('text') || '').trim(), name: String(fd.get('name') || '').trim(), website: fd.get('website') || '', t: opened };
+    msg.className = 'form-msg';
+    if (!data.cls) { msg.classList.add('error'); msg.textContent = '들으신 수업을 골라 주세요.'; form.querySelector('.chip input')?.focus(); return; }
+    if (data.text.length < 5) { msg.classList.add('error'); msg.textContent = '후기를 5자 이상 적어 주세요.'; text.focus(); return; }
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true; msg.textContent = '메모를 붙이는 중이에요…';
+    try {
+      const r = await fetch('/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const out = await r.json().catch(() => ({}));
+      if (!r.ok || !out.ok) throw new Error(out.error && !/^(sheet failed|not configured|bad request)$/.test(out.error) ? out.error : '저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      const review = out.review || { ...data, name: data.name || '수강생' };
+      all.unshift(review);
+      cls = ''; shown = PAGE;
+      filterBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cls === '')));
+      render(review);
+      msg.classList.add('ok'); msg.textContent = form.dataset.success;
+      text.value = ''; count.textContent = '0';
+      board.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    } catch (err) {
+      msg.classList.add('error'); msg.textContent = err.message;
+    } finally { btn.disabled = false; }
+  });
+})();
