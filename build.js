@@ -301,10 +301,15 @@ function materials(m) {
 // 내용은 서버(api/_data/materials.json)에만 있고, 비밀번호가 맞을 때 받아와서 그립니다.
 // 한 번 맞히면 그 브라우저에 기억돼서 다음부터는 바로 열려요.
 function classPage(cls) {
-  return `<section class="page-hero class-hero"><div class="wrap">
+  // banner 가 있으면 제목 글자 대신 배너 이미지 (제목은 화면 읽기용으로만 남김)
+  const head = cls.banner
+    ? `<h1 class="sr-only">${esc(cls.title)}</h1>
+  <img class="class-banner" src="${esc(cls.banner)}" alt="${esc(cls.title)}" width="2000" height="667" fetchpriority="high">`
+    : `<span class="eyebrow">수업자료</span>
+  <h1>${esc(cls.title)}</h1>`;
+  return `<section class="page-hero class-hero${cls.banner ? ' has-banner' : ''}"><div class="wrap">
   <a class="class-back" href="/materials">← 수업자료실</a>
-  <span class="eyebrow">수업자료</span>
-  <h1>${esc(cls.title)}</h1>
+  ${head}
 </div></section>
 <section class="section"><div class="wrap" id="class-page" data-class="${esc(cls.id)}">
   <div id="class-lock" hidden>
