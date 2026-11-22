@@ -228,7 +228,8 @@ if (classRoot) {
     }
     return groups.map(g => `<section class="prompt-group">
       ${g.name ? `<h2 class="prompt-group-title">${esc(g.name)}</h2>` : ''}
-      <div class="prompt-buttons">${g.items.map(p => `<a class="prompt-btn" href="?p=${encodeURIComponent(p.id)}">
+      <div class="prompt-buttons">${g.items.map(p => `<a class="prompt-btn${p.thumb ? ' has-thumb' : ''}" href="?p=${encodeURIComponent(p.id)}">
+        ${p.thumb ? `<span class="prompt-thumb"><img src="${esc(p.thumb)}" alt="${esc(p.title)} 결과물 예시" loading="lazy" decoding="async"></span>` : ''}
         ${p.tag ? `<span class="prompt-tag">${esc(p.tag)}</span>` : ''}
         <strong>${esc(p.title)}</strong>
         ${p.guide ? `<small>${esc(p.guide)}</small>` : ''}

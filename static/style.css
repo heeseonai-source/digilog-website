@@ -386,6 +386,10 @@ textarea{min-height:140px;resize:vertical}
 .prompt-buttons{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .prompt-btn{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:var(--radius-sm);padding:22px 22px 18px;transition:border-color .15s,transform .15s,box-shadow .15s}
 .prompt-btn:hover,.prompt-btn:focus-visible{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.06)}
+.prompt-btn.has-thumb{padding-top:12px}
+.prompt-thumb{display:block;margin:0 -10px 6px;aspect-ratio:16/10;border-radius:calc(var(--radius-sm) - 4px);overflow:hidden;background:#F4F1EC}
+.prompt-thumb img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .3s}
+.prompt-btn:hover .prompt-thumb img{transform:scale(1.04)}
 .prompt-btn strong{font-size:19px;line-height:1.4;word-break:keep-all}
 .prompt-btn small{color:var(--muted);font-size:14px;line-height:1.55;word-break:keep-all}
 .prompt-tag{align-self:flex-start;font-size:13px;font-weight:700;background:var(--mint-soft);border-radius:999px;padding:3px 10px}
