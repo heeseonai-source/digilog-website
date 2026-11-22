@@ -172,6 +172,121 @@ if (historyList) {
 }
 
 /* ---------- 수업자료 (수업별 비밀번호) ---------- */
+// 수업 비밀번호를 이 브라우저에 기억 (개인정보 차단·시크릿 창이면 조용히 건너뜀)
+const classPw = {
+  key: id => 'digilog-class-pw:' + id,
+  get(id) { try { return localStorage.getItem(this.key(id)) || ''; } catch { return ''; } },
+  set(id, pw) { try { localStorage.setItem(this.key(id), pw); } catch {} },
+  clear(id) { try { localStorage.removeItem(this.key(id)); } catch {} },
+};
+const fileListHtml = files => files && files.length ? `<ul class="file-list">${files.map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener"><span class="ic" aria-hidden="true">📄</span><span>${esc(f.name)}${f.note ? `<small>${esc(f.note)}</small>` : ''}</span></a></li>`).join('')}</ul>` : '';
+// 본문 표시법: *강조*, 줄바꿈, 빈 줄로 문단 나눔, http 주소는 자동 링크
+const classRich = s => String(s || '').split(/\n\s*\n/).map(p => `<p>${esc(p.trim())
+  .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+  .replace(/(https?:\/\/[^\s<]+)/g, '<a class="text-link" href="$1" target="_blank" rel="noopener">$1</a>')
+  .replace(/\n/g, '<br>')}</p>`).join('');
+
+const classRoot = document.getElementById('class-page');
+if (classRoot) {
+  const id = classRoot.dataset.class;
+  const lock = document.getElementById('class-lock');
+  const loading = document.getElementById('class-loading');
+  const content = document.getElementById('class-content');
+  const tools = document.getElementById('class-tools');
+  const form = document.getElementById('class-form');
+  const msg = form.querySelector('.form-msg');
+  const showLock = text => {
+    loading.hidden = true; content.hidden = true; tools.hidden = true; lock.hidden = false;
+    msg.className = text ? 'form-msg error' : 'form-msg'; msg.textContent = text || '';
+  };
+  const open = async pw => {
+    const r = await fetch('/api/materials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classId: id, password: pw }) });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(data.error || '확인하지 못했어요.'), { status: r.status });
+    classPw.set(id, pw);
+    const prompts = data.prompts || [];
+    const pick = prompts.find(p => p.id === new URLSearchParams(location.search).get('p'));
+    if (pick) { // 프롬프트 한 개만 보는 페이지
+      showPrompt(pick, prompts);
+    } else {
+      const sections = (data.sections || []).map(s => `<article class="class-section">
+        ${s.title ? `<h2>${esc(s.title)}</h2>` : ''}
+        ${classRich(s.body)}
+        ${fileListHtml(s.links)}
+      </article>`).join('');
+      content.innerHTML = promptListHtml(prompts) + sections + (data.files && data.files.length ? `<article class="class-section"><h2>자료 내려받기</h2>${fileListHtml(data.files)}</article>` : '');
+    }
+    lock.hidden = true; loading.hidden = true; content.hidden = false; tools.hidden = false;
+  };
+  // 프롬프트 제목 버튼 목록 (같은 group 끼리 묶음)
+  const promptListHtml = prompts => {
+    if (!prompts.length) return '';
+    const groups = [];
+    for (const p of prompts) {
+      const last = groups[groups.length - 1];
+      if (last && last.name === (p.group || '')) last.items.push(p); else groups.push({ name: p.group || '', items: [p] });
+    }
+    return groups.map(g => `<section class="prompt-group">
+      ${g.name ? `<h2 class="prompt-group-title">${esc(g.name)}</h2>` : ''}
+      <div class="prompt-buttons">${g.items.map(p => `<a class="prompt-btn" href="?p=${encodeURIComponent(p.id)}">
+        ${p.tag ? `<span class="prompt-tag">${esc(p.tag)}</span>` : ''}
+        <strong>${esc(p.title)}</strong>
+        ${p.guide ? `<small>${esc(p.guide)}</small>` : ''}
+        <span class="prompt-go" aria-hidden="true">프롬프트 보기 →</span>
+      </a>`).join('')}</div>
+    </section>`).join('');
+  };
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; } catch {}
+    const ta = document.createElement('textarea'); // 예전 브라우저용
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    ta.remove(); return ok;
+  };
+  const showPrompt = (p, all) => {
+    document.title = `${p.title} | 프롬프트`;
+    document.body.classList.add('prompt-mode'); // 수업 제목 띠를 숨기고 프롬프트만 보이게
+    const i = all.indexOf(p), next = all[i + 1];
+    content.innerHTML = `<article class="prompt-page">
+      <a class="class-back" href="${location.pathname}">← 프롬프트 목록</a>
+      <div class="prompt-head">
+        <h2>${esc(p.title)}</h2>
+        <button type="button" class="prompt-copy" data-copy>📋 프롬프트 복사하기</button>
+      </div>
+      <pre class="prompt-text" id="prompt-text">${esc(p.text)}</pre>
+      <button type="button" class="prompt-copy wide" data-copy>📋 프롬프트 복사하기</button>
+      ${p.after ? `<div class="prompt-after"><h3>${esc(p.after.title)}</h3><ol>${(p.after.steps || []).map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>` : ''}
+      ${next ? `<a class="prompt-next" href="?p=${encodeURIComponent(next.id)}">다음 프롬프트: ${esc(next.title)} →</a>` : ''}
+    </article>`;
+    content.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
+      const ok = await copyText(p.text);
+      content.querySelectorAll('[data-copy]').forEach(b => { b.textContent = ok ? '✅ 복사됐어요! 붙여넣기 하세요' : '복사가 안 됐어요. 글을 길게 눌러 복사해 주세요'; b.classList.toggle('done', ok); });
+      setTimeout(() => content.querySelectorAll('[data-copy]').forEach(b => { b.textContent = '📋 프롬프트 복사하기'; b.classList.remove('done'); }), 2500);
+    }));
+  };
+  const saved = classPw.get(id);
+  if (saved) {
+    open(saved).catch(err => {
+      if (err.status === 401) { classPw.clear(id); showLock('비밀번호가 바뀌었어요. 다시 입력해 주세요.'); }
+      else showLock(err.message);
+    });
+  } else showLock('');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const pw = form.password.value.trim();
+    if (!pw) { msg.className = 'form-msg error'; msg.textContent = '비밀번호를 입력해 주세요.'; return; }
+    const btn = form.querySelector('button');
+    btn.disabled = true; msg.className = 'form-msg'; msg.textContent = '';
+    try { await open(pw); form.reset(); }
+    catch (err) { msg.className = 'form-msg error'; msg.textContent = err.message; }
+    finally { btn.disabled = false; }
+  });
+  document.getElementById('class-forget').addEventListener('click', () => {
+    classPw.clear(id); content.innerHTML = ''; showLock('');
+  });
+}
+
 const matForm = document.getElementById('materials-form');
 if (matForm) {
   const select = matForm.querySelector('select');
@@ -194,6 +309,11 @@ if (matForm) {
       const r = await fetch('/api/materials', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classId: select.value, password: matForm.password.value }) });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || '확인하지 못했어요.');
+      if (data.page) { // 전용 페이지가 있는 수업 → 비밀번호 기억하고 그 페이지로 이동
+        classPw.set(data.id, matForm.password.value.trim());
+        location.href = '/materials/' + encodeURIComponent(data.id);
+        return;
+      }
       msg.className = 'form-msg ok'; msg.textContent = `${data.title} 자료입니다.`;
       out.innerHTML = `<ul class="file-list">${data.files.map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener"><span class="ic" aria-hidden="true">📄</span><span>${esc(f.name)}${f.note ? `<small>${esc(f.note)}</small>` : ''}</span></a></li>`).join('')}</ul>`;
     } catch (err) {

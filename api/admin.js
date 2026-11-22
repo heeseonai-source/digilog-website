@@ -76,7 +76,9 @@ module.exports = async (req, res) => {
           const prev = old.find(o => o.id === c.id);
           const passwordHash = c.newPassword ? hash(c.newPassword) : prev?.passwordHash;
           if (!passwordHash) throw Object.assign(new Error(`「${c.title || '이름 없는 수업'}」의 비밀번호를 정해 주세요.`), { user: true });
-          return { id, title: String(c.title || '').trim(), passwordHash, files: (c.files || []).filter(f => f.url).map(f => ({ name: f.name || '자료', url: f.url, note: f.note || '' })) };
+          // 수업 전용 페이지(page·sections·prompts)는 관리자 화면에 칸이 없으므로 기존 값을 그대로 유지
+          const extra = prev?.page ? { page: true, sections: prev.sections || [], prompts: prev.prompts || [] } : {};
+          return { id, title: String(c.title || '').trim(), passwordHash, ...extra, files:(c.files || []).filter(f => f.url).map(f => ({ name: f.name || '자료', url: f.url, note: f.note || '' })) };
         });
       }
       const json = JSON.stringify(data, null, 2) + '\n';

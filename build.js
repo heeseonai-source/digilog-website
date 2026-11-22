@@ -297,6 +297,30 @@ function materials(m) {
 </div></section>`;
 }
 
+// 수업 전용 페이지: /materials/<id>
+// 내용은 서버(api/_data/materials.json)에만 있고, 비밀번호가 맞을 때 받아와서 그립니다.
+// 한 번 맞히면 그 브라우저에 기억돼서 다음부터는 바로 열려요.
+function classPage(cls) {
+  return `<section class="page-hero class-hero"><div class="wrap">
+  <a class="class-back" href="/materials">← 수업자료실</a>
+  <span class="eyebrow">수업자료</span>
+  <h1>${esc(cls.title)}</h1>
+</div></section>
+<section class="section"><div class="wrap" id="class-page" data-class="${esc(cls.id)}">
+  <div id="class-lock" hidden>
+    ${X.card(`<form id="class-form" novalidate>
+      <div class="field"><label for="class-page-pw">수업 비밀번호</label><input id="class-page-pw" name="password" type="password" autocomplete="off" required><span class="hint">한 번만 입력하면 이 기기에서는 다음부터 바로 열려요.</span></div>
+      ${X.button({ label: '자료 열기', type: 'submit', width: '100%' })}
+      <p class="form-msg" role="status" aria-live="polite"></p>
+    </form>`, { className: 'lock-card' })}
+  </div>
+  <p class="blog-status" id="class-loading">자료를 여는 중이에요…</p>
+  <div id="class-content" hidden></div>
+  <div class="class-tools" id="class-tools" hidden><button type="button" class="text-link" id="class-forget">이 기기에서 비밀번호 지우기</button></div>
+  <noscript><p>이 페이지는 자바스크립트를 켜야 볼 수 있어요.</p></noscript>
+</div></section>`;
+}
+
 function contact(site, c) {
   return `${pageHero('강의 문의', c.hero, 'headset')}
 <section class="section"><div class="wrap contact-grid">
@@ -349,6 +373,10 @@ function build({ clean = true } = {}) {
     materials: layout(site, { key: 'materials', title: '수업자료실', description: '수강생을 위한 자료실. 수업에서 안내받은 비밀번호로 자료를 받을 수 있습니다.', body: materials(m), noindex: true }),
     contact: layout(site, { key: 'contact', title: '강의 문의', description: '기관·단체 생성형 AI 강의, 연수, 멘토링, 콘텐츠 협업 문의.', body: contact(site, c) }),
   };
+  // 수업 전용 페이지 (page: true 인 수업만)
+  const classes = JSON.parse(fs.readFileSync(path.join(ROOT, 'api', '_data', 'materials.json'), 'utf8')).filter(x => x.page);
+  for (const cls of classes) pages['materials/' + cls.id] = layout(site, { key: 'materials', title: cls.title, description: '수강생 전용 수업자료 페이지입니다.', body: classPage(cls), noindex: true });
+  fs.mkdirSync(path.join(OUT, 'materials'), { recursive: true });
   for (const [name, html] of Object.entries(pages)) fs.writeFileSync(path.join(OUT, name + '.html'), html);
   return Object.keys(pages).length;
 }
