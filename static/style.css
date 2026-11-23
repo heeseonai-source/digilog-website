@@ -410,6 +410,18 @@ textarea{min-height:140px;resize:vertical}
 .prompt-after ol{margin:0;padding-left:22px;line-height:1.8}
 .prompt-next{justify-self:end;font-weight:700;color:var(--ink)}
 @media (max-width:600px){.prompt-head .prompt-copy{width:100%}}
+/* 결과물 이미지가 있는 프롬프트: 왼쪽 이미지 + 오른쪽 프롬프트 */
+.prompt-page:has(.prompt-split){max-width:1080px}
+.prompt-split{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:24px;align-items:start}
+.prompt-main{display:grid;gap:16px;min-width:0}
+.prompt-figure{margin:0;position:sticky;top:96px}
+.prompt-figure img{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);object-fit:contain;border-radius:var(--radius-sm);border:1px solid var(--line);background:#FAF8F5}
+.prompt-figure figcaption{margin-top:8px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+  .prompt-split{grid-template-columns:1fr;gap:16px}
+  .prompt-figure{position:static;max-width:300px;margin-inline:auto;width:100%}
+  .prompt-figure img{max-height:none}
+}
 /* 수업 안내 페이지 (예: AI로 슬라이드 만들기) */
 .guide-page{max-width:960px}
 .guide-title{font-size:clamp(24px,3.6vw,32px);margin:4px 0 0;word-break:keep-all}

@@ -271,8 +271,15 @@ if (classRoot) {
         <h2>${esc(p.title)}</h2>
         <button type="button" class="prompt-copy" data-copy>📋 프롬프트 복사하기</button>
       </div>
+      ${p.image ? `<div class="prompt-split">
+        <figure class="prompt-figure">
+          <a href="${esc(p.image)}" target="_blank" rel="noopener"><img src="${esc(p.image)}" alt="${esc(p.title)} 결과물 예시"></a>
+          <figcaption>결과물 예시 · 누르면 크게 보여요</figcaption>
+        </figure>
+        <div class="prompt-main">` : ''}
       <pre class="prompt-text" id="prompt-text">${esc(p.text)}</pre>
       <button type="button" class="prompt-copy wide" data-copy>📋 프롬프트 복사하기</button>
+      ${p.image ? '</div></div>' : ''}
       ${p.after ? `<div class="prompt-after"><h3>${esc(p.after.title)}</h3><ol>${(p.after.steps || []).map(s => `<li>${esc(s)}</li>`).join('')}</ol></div>` : ''}
       ${next ? `<a class="prompt-next" href="?p=${encodeURIComponent(next.id)}">다음 프롬프트: ${esc(next.title)} →</a>` : ''}
     </article>`;
