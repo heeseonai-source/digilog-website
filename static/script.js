@@ -233,7 +233,7 @@ if (classRoot) {
         ${p.tag ? `<span class="prompt-tag">${esc(p.tag)}</span>` : ''}
         <strong>${esc(p.title)}</strong>
         ${p.guide ? `<small>${esc(p.guide)}</small>` : ''}
-        <span class="prompt-go" aria-hidden="true">프롬프트 보기 →</span>
+        <span class="prompt-go" aria-hidden="true">${p.kind === 'guide' ? '안내 보기' : '프롬프트 보기'} →</span>
       </a>`).join('')}</div>
     </section>`).join('');
   };
@@ -249,6 +249,22 @@ if (classRoot) {
     document.title = `${p.title} | 프롬프트`;
     document.body.classList.add('prompt-mode'); // 수업 제목 띠를 숨기고 프롬프트만 보이게
     const i = all.indexOf(p), next = all[i + 1];
+    if (p.kind === 'guide') { // 안내 페이지 (강사가 쓴 HTML, 서버에서 비밀번호 확인 뒤에만 내려옴)
+      content.innerHTML = `<article class="prompt-page guide-page">
+        <a class="class-back" href="${location.pathname}">← 프롬프트 목록</a>
+        <h2 class="guide-title">${esc(p.title)}</h2>
+        ${p.html || ''}
+        ${next ? `<a class="prompt-next" href="?p=${encodeURIComponent(next.id)}">다음: ${esc(next.title)} →</a>` : ''}
+      </article>`;
+      content.querySelectorAll('[data-copy-target]').forEach(btn => btn.addEventListener('click', async () => {
+        const src = document.getElementById(btn.dataset.copyTarget);
+        const ok = await copyText(src ? src.textContent : '');
+        const label = btn.textContent;
+        btn.textContent = ok ? '✅ 복사됐어요!' : '길게 눌러 복사해 주세요'; btn.classList.toggle('done', ok);
+        setTimeout(() => { btn.textContent = label; btn.classList.remove('done'); }, 2500);
+      }));
+      return;
+    }
     content.innerHTML = `<article class="prompt-page">
       <a class="class-back" href="${location.pathname}">← 프롬프트 목록</a>
       <div class="prompt-head">
