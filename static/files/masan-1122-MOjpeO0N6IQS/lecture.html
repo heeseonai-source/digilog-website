@@ -715,7 +715,19 @@ document.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>
 document.getElementById('close').addEventListener('click',closeP);
 modal.addEventListener('click',e=>{if(e.target===modal)closeP();});
 document.getElementById('copy').addEventListener('click',async e=>{const b=e.currentTarget;try{await navigator.clipboard.writeText(mp.textContent);b.textContent='복사됨';}catch(err){const r=document.createRange();r.selectNodeContents(mp);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);b.textContent='선택됨 · Ctrl+C';}});
-document.addEventListener('keydown',e=>{if(modal.classList.contains('on')){if(e.key==='Escape')closeP();return;}if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();fwd();}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1);}if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);});
+const NEXT=['ArrowRight','ArrowDown','PageDown',' ','Spacebar','Enter','n','N'],PREV=['ArrowLeft','ArrowUp','PageUp','Backspace','p','P'];
+const kk=e=>e.key&&e.key!=='Unidentified'&&e.key!=='Process'?e.key:({34:'PageDown',33:'PageUp',39:'ArrowRight',37:'ArrowLeft',40:'ArrowDown',38:'ArrowUp',32:' ',13:'Enter',116:'F5',190:'.',66:'b'})[e.keyCode]||'';
+let blk=null;function blank(){if(blk){blk.remove();blk=null;return;}blk=document.createElement('div');blk.style.cssText='position:fixed;inset:0;background:#000;z-index:99999;cursor:none';blk.onclick=blank;document.body.appendChild(blk);}
+function fs(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(err){}}
+document.addEventListener('keydown',e=>{const k=kk(e);
+if(k==='F5'){e.preventDefault();fs();return;}
+if(k==='b'||k==='B'||k==='.'){e.preventDefault();blank();return;}
+if(blk&&(NEXT.includes(k)||PREV.includes(k))){e.preventDefault();blank();return;}
+if(modal.classList.contains('on')){if(k==='Escape'||NEXT.includes(k)||PREV.includes(k)){e.preventDefault();closeP();}return;}
+if(NEXT.includes(k)){e.preventDefault();if(document.activeElement&&document.activeElement!==document.body)document.activeElement.blur();fwd();}
+else if(PREV.includes(k)){e.preventDefault();if(document.activeElement&&document.activeElement!==document.body)document.activeElement.blur();show(i-1);}
+else if(k==='Home')show(0);else if(k==='End')show(slides.length-1);},true);
+window.addEventListener('load',()=>{try{window.focus();}catch(err){}});
 let x0=null;document.getElementById('wrap').addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});
 document.getElementById('wrap').addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50){if(d<0)fwd();else show(i-1);}x0=null;});
 const ro=new ResizeObserver(fit);ro.observe(document.body);
