@@ -214,10 +214,23 @@ if (classRoot) {
         ${classRich(s.body)}
         ${fileListHtml(s.links)}
       </article>`).join('');
-      content.innerHTML = promptListHtml(prompts) + sections + (data.files && data.files.length ? `<article class="class-section"><h2>자료 내려받기</h2>${fileListHtml(data.files)}</article>` : '');
+      content.innerHTML = lectureHtml(data.lecture) + promptListHtml(prompts) + sections + (data.files && data.files.length ? `<article class="class-section"><h2>자료 내려받기</h2>${fileListHtml(data.files)}</article>` : '');
     }
     lock.hidden = true; loading.hidden = true; content.hidden = false; tools.hidden = false;
   };
+  // 맨 위 수업 강의안 카드: HTML 슬라이드는 새 창으로 바로 열고, PDF는 내려받기
+  const lectureHtml = l => !l ? '' : `<section class="lecture-card${l.thumb ? ' has-thumb' : ''}">
+    ${l.thumb ? `<a class="lecture-thumb" href="${esc(l.html)}" target="_blank" rel="noopener"><img src="${esc(l.thumb)}" alt="${esc(l.title)} 표지"><span class="lecture-play" aria-hidden="true">▶</span></a>` : ''}
+    <div class="lecture-body">
+      <span class="prompt-tag">수업 강의안${l.slides ? ` · 슬라이드 ${esc(l.slides)}장` : ''}</span>
+      <h2>${esc(l.title)}</h2>
+      ${l.note ? `<p>${esc(l.note)}</p>` : ''}
+      <div class="lecture-actions">
+        <a class="lecture-btn primary" href="${esc(l.html)}" target="_blank" rel="noopener">강의안 바로 보기</a>
+        ${l.pdf ? `<a class="lecture-btn" href="${esc(l.pdf)}" download="${esc(l.pdfName || '')}">PDF 내려받기${l.pdfSize ? ` <small>${esc(l.pdfSize)}</small>` : ''}</a>` : ''}
+      </div>
+    </div>
+  </section>`;
   // 프롬프트 제목 버튼 목록 (같은 group 끼리 묶음)
   const promptListHtml = prompts => {
     if (!prompts.length) return '';

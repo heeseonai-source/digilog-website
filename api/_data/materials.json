@@ -84,6 +84,15 @@
         "thumb": "/assets/classes/masan-1122-xmas-strip.webp",
         "image": "/assets/classes/masan-1122-xmas-strip-full.webp"
       }
-    ]
+    ],
+    "lecture": {
+      "title": "AI로 그리는 나의 이야기 · 3차시 강의안",
+      "note": "수업 시간에 본 슬라이드예요. 화살표 키나 화면 넘기기로 한 장씩 볼 수 있어요.",
+      "html": "/files/masan-1122-MOjpeO0N6IQS/lecture",
+      "pdf": "/files/masan-1122-MOjpeO0N6IQS/lecture.pdf",
+      "pdfName": "AI로_그리는_나의_이야기_3차시.pdf",
+      "pdfSize": "4.1MB",
+      "slides": 26
+    }
   }
 ]

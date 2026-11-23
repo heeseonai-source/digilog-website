@@ -34,5 +34,5 @@ module.exports = async (req, res) => {
     attempts.get(ip).push(Date.now());
     return send(res, 401, { error: '비밀번호가 맞지 않아요. 수업 때 받은 비밀번호를 다시 확인해 주세요.' });
   }
-  return send(res, 200, { id: c.id, title: c.title, page: !!c.page, files: c.files || [], sections: c.sections || [], prompts: c.prompts || [] }, { 'Cache-Control': 'no-store' });
+  return send(res, 200, { id: c.id, title: c.title, page: !!c.page, files: c.files || [], sections: c.sections || [], prompts: c.prompts || [], lecture: c.lecture || null }, { 'Cache-Control': 'no-store' });
 };
