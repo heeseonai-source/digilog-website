@@ -52,6 +52,22 @@ module.exports = async (req, res) => {
 
   if (!auth.isAuthed(req)) return send(res, 401, { error: '다시 로그인해 주세요.' });
 
+  // 수업 진도 바꾸기 (수업 페이지의 강사용 버튼) { cls, step }  step: 0부터, null 이면 시작 전
+  if (action === 'progress') {
+    const cls = (JSON.parse(await store.readText(PAGES.classes.path)) || []).find(c => c.id === body.cls);
+    const steps = cls && Array.isArray(cls.progress) ? cls.progress : null;
+    if (!steps) return send(res, 404, { error: '진도표가 있는 수업이 아니에요.' });
+    const step = body.step === null ? null : Number(body.step);
+    if (step !== null && !(Number.isInteger(step) && step >= 0 && step < steps.length)) return send(res, 400, { error: '단계 번호가 올바르지 않아요.' });
+    try {
+      const saved = await require('./_lib/progress').set(cls.id, step, step === null ? '시작 전' : steps[step].label);
+      return send(res, 200, { ok: true, ...saved });
+    } catch (e) {
+      console.error('progress set error', e.message);
+      return send(res, 502, { error: '진도를 저장하지 못했어요. 구글 시트 앱스 스크립트가 최신인지 확인해 주세요.' });
+    }
+  }
+
   try {
     if (action === 'load') {
       const p = PAGES[body.page];
@@ -77,7 +93,7 @@ module.exports = async (req, res) => {
           const passwordHash = c.newPassword ? hash(c.newPassword) : prev?.passwordHash;
           if (!passwordHash) throw Object.assign(new Error(`「${c.title || '이름 없는 수업'}」의 비밀번호를 정해 주세요.`), { user: true });
           // 수업 전용 페이지(page·sections·prompts)는 관리자 화면에 칸이 없으므로 기존 값을 그대로 유지
-          const extra = prev?.page ? { page: true, sections: prev.sections || [], prompts: prev.prompts || [], ...(prev.lecture ? { lecture: prev.lecture } : {}), ...(prev.banner ? { banner: prev.banner } : {}) } : {};
+          const extra = prev?.page ? { page: true, sections: prev.sections || [], prompts: prev.prompts || [], ...(prev.lecture ? { lecture: prev.lecture } : {}), ...(prev.banner ? { banner: prev.banner } : {}), ...(prev.progress ? { progress: prev.progress } : {}) } : {};
           return { id, title: String(c.title || '').trim(), passwordHash, ...extra, files:(c.files || []).filter(f => f.url).map(f => ({ name: f.name || '자료', url: f.url, note: f.note || '' })) };
         });
       }

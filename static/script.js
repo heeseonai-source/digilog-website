@@ -214,9 +214,76 @@ if (classRoot) {
         ${classRich(s.body)}
         ${fileListHtml(s.links)}
       </article>`).join('');
-      content.innerHTML = lectureHtml(data.lecture) + promptListHtml(prompts) + sections + (data.files && data.files.length ? `<article class="class-section"><h2>자료 내려받기</h2>${fileListHtml(data.files)}</article>` : '');
+      content.innerHTML = (data.progress ? '<section class="progress-card" id="class-progress" hidden></section>' : '') + lectureHtml(data.lecture) + promptListHtml(prompts) + sections + (data.files && data.files.length ? `<article class="class-section"><h2>자료 내려받기</h2>${fileListHtml(data.files)}</article>` : '');
     }
     lock.hidden = true; loading.hidden = true; content.hidden = false; tools.hidden = false;
+    if (!pick && data.progress) startProgress(data.progress);
+  };
+
+  // ---------- 오늘의 진도 (강사가 움직이면 수강생 화면도 따라 움직임) ----------
+  let progTimer = null;
+  const startProgress = steps => {
+    const box = document.getElementById('class-progress');
+    if (!box || progTimer) return;
+    let cur = null, teacher = false, busy = false;
+    const draw = (note = '') => {
+      const n = steps.length;
+      const pct = cur === null ? 0 : Math.round(((cur + 1) / n) * 100);
+      box.innerHTML = `
+        <div class="progress-head">
+          <h2>오늘의 진도</h2>
+          <span class="progress-now">${cur === null ? '아직 시작 전이에요' : `지금 <b>${esc(steps[cur].label)}</b> 진행 중`}</span>
+          <span class="progress-pct" aria-hidden="true">${cur === null ? 0 : cur + 1} / ${n}</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${cur === null ? 0 : cur + 1}" aria-label="수업 진도"><span style="width:${pct}%"></span></div>
+        <ol class="progress-steps">${steps.map((s, i) => {
+          const state = cur === null || i > cur ? 'todo' : i === cur ? 'now' : 'done';
+          const inner = `<span class="ps-dot" aria-hidden="true">${state === 'done' ? '✓' : i + 1}</span><span class="ps-txt"><b>${esc(s.label)}</b>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</span>${state === 'now' ? '<em class="ps-here">지금 여기</em>' : ''}`;
+          const tag = teacher ? `<button type="button" data-step="${i}">${inner}</button>` : s.p ? `<a href="?p=${encodeURIComponent(s.p)}">${inner}</a>` : `<div>${inner}</div>`;
+          return `<li class="ps ${state}"${state === 'now' ? ' aria-current="step"' : ''}>${tag}</li>`;
+        }).join('')}</ol>
+        ${teacher ? `<div class="progress-teacher">
+          <span>강사용</span>
+          <button type="button" data-move="-1" ${cur === null ? 'disabled' : ''}>◀ 이전</button>
+          <button type="button" data-move="1" class="primary" ${cur === n - 1 ? 'disabled' : ''}>다음 단계 ▶</button>
+          <button type="button" data-reset ${cur === null ? 'disabled' : ''}>처음으로</button>
+          <small>${esc(note || '단계를 누르면 바로 그 단계로 옮겨요. 수강생 화면은 15초 안에 따라와요.')}</small>
+        </div>` : ''}`;
+      box.hidden = false;
+      const now = box.querySelector('.ps.now');
+      if (now) { const ol = box.querySelector('.progress-steps'); ol.scrollLeft = now.offsetLeft - ol.clientWidth / 2 + now.clientWidth / 2; }
+    };
+    const pull = async () => {
+      try {
+        const r = await fetch(`/api/progress?cls=${encodeURIComponent(id)}&_=${Math.floor(Date.now() / 5000)}`);
+        const d = await r.json();
+        if (busy) return;
+        const next = d.step === null || d.step === undefined ? null : Number(d.step);
+        if (next !== cur || !box.innerHTML) { cur = next; draw(); }
+      } catch { if (!box.innerHTML) draw(); }
+    };
+    const push = async step => {
+      busy = true; draw('저장하는 중…');
+      try {
+        const r = await fetch('/api/admin?action=progress', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cls: id, step }) });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || '저장하지 못했어요.');
+        cur = step; draw('저장했어요. 수강생 화면도 곧 바뀌어요.');
+      } catch (err) { draw(err.message); }
+      finally { busy = false; }
+    };
+    box.addEventListener('click', e => {
+      if (!teacher) return;
+      const b = e.target.closest('button'); if (!b || b.disabled) return;
+      if (b.dataset.step !== undefined) push(Number(b.dataset.step));
+      else if (b.dataset.move) push(cur === null ? 0 : Math.min(steps.length - 1, Math.max(0, cur + Number(b.dataset.move))));
+      else if (b.dataset.reset !== undefined) push(null);
+    });
+    // 관리자(/admin)에 로그인한 기기면 강사용 버튼을 보여 줌
+    fetch('/api/admin?action=status', { credentials: 'same-origin' }).then(r => r.json()).then(s => { if (s.authed) { teacher = true; draw(); } }).catch(() => {});
+    pull();
+    progTimer = setInterval(() => { if (!document.hidden) pull(); }, 15000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) pull(); });
   };
   // 맨 위 수업 강의안 카드: HTML 슬라이드는 새 창으로 바로 열고, PDF는 내려받기
   const lectureHtml = l => !l ? '' : `<section class="lecture-card${l.thumb ? ' has-thumb' : ''}">

@@ -2,6 +2,7 @@
  * 디지로그쌤 홈페이지 → 구글 시트 저장용 앱스 스크립트
  *  - 강의 문의  → '문의' 탭
  *  - 수강생 후기 → '후기' 탭 (홈페이지에 바로 보임. 내리려면 '숨기기' 칸에 아무 글자나 적기)
+ *  - 수업 진도   → '진도' 탭 (수업 페이지 맨 위 진도 바. 수업마다 한 줄, 강사가 수업 페이지에서 바꿈)
  * 사용법은 docs/구글시트-연결방법.md 를 보세요.
  */
 const SECRET = ''; // 비워 두면 확인 안 함. 쓰려면 Vercel 환경변수 SHEET_SECRET 과 똑같이 맞춥니다 (2026-11-12 실제 배포본은 비워 둠)
@@ -20,9 +21,49 @@ function reviewSheet() {
   return sheet;
 }
 
+function progressSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('진도') || ss.insertSheet('진도');
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['수업 ID', '단계 번호(0부터)', '단계 이름', '바뀐 시각']);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// 수업 진도 읽기: ?action=progress&cls=<수업 id>  → { ok, step, at }  (step 이 비어 있으면 시작 전)
+function getProgress(cls) {
+  const sheet = progressSheet();
+  const rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 4).getValues() : [];
+  const row = rows.find(r => String(r[0]) === String(cls));
+  if (!row || row[1] === '' || row[1] === null) return out({ ok: true, step: null, at: '' });
+  return out({ ok: true, step: Number(row[1]), at: row[3] instanceof Date ? row[3].toISOString() : String(row[3]) });
+}
+
+// 수업 진도 바꾸기: { type:'progress', cls, step, label }  (수업마다 한 줄을 덮어씀)
+function saveProgress(d) {
+  const cls = String(d.cls || '').replace(/[^a-z0-9-]/gi, '').slice(0, 60);
+  if (!cls) return out({ ok: false, error: 'cls' });
+  const step = d.step === null || d.step === '' ? '' : Number(d.step);
+  if (step !== '' && !(step >= 0 && step < 100)) return out({ ok: false, error: 'step' });
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = progressSheet();
+    const ids = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).getValues().map(r => String(r[0])) : [];
+    const i = ids.indexOf(cls);
+    const values = [[cls, step, clean(d.label).slice(0, 60), new Date()]];
+    if (i >= 0) sheet.getRange(i + 2, 1, 1, 4).setValues(values); else sheet.appendRow(values[0]);
+    return out({ ok: true });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 // 홈페이지가 후기 목록을 가져갈 때 (숨기기 칸이 빈 것만, 최신순)
 function doGet(e) {
   const action = (e && e.parameter && e.parameter.action) || '';
+  if (action === 'progress') return getProgress(e.parameter.cls || '');
   if (action !== 'reviews') return out({ ok: true });
   const sheet = reviewSheet();
   const rows = sheet.getLastRow() > 1 ? sheet.getRange(2, 1, sheet.getLastRow() - 1, 5).getValues() : [];
@@ -44,6 +85,7 @@ function doPost(e) {
     if (SECRET && d.secret !== SECRET) return out({ ok: false, error: 'secret' });
 
     if (d.type === 'review') return saveReview(d);
+    if (d.type === 'progress') return saveProgress(d);
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('문의') || SpreadsheetApp.getActiveSpreadsheet().insertSheet('문의');
     if (sheet.getLastRow() === 0) {

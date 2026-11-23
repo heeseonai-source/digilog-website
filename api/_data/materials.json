@@ -102,6 +102,40 @@
       "pdfName": "AI로_그리는_나의_이야기_3차시.pdf",
       "pdfSize": "4.4MB",
       "slides": 27
-    }
+    },
+    "progress": [
+      {
+        "label": "시작 준비",
+        "sub": "자료실 들어오기"
+      },
+      {
+        "label": "포트폴리오 이력서",
+        "sub": "ChatGPT",
+        "p": "resume"
+      },
+      {
+        "label": "크리스마스 이미지",
+        "sub": "쉬어가기 · PC",
+        "p": "xmas-seal"
+      },
+      {
+        "label": "카나나 · 카톡 ChatGPT",
+        "sub": "쉬어가기 · 휴대폰"
+      },
+      {
+        "label": "1분 자기소개 슬라이드",
+        "sub": "Gemini 캔버스",
+        "p": "intro-slides"
+      },
+      {
+        "label": "나만의 동화책",
+        "sub": "ChatGPT → Gemini",
+        "p": "storybook"
+      },
+      {
+        "label": "마무리",
+        "sub": "오늘 만든 것 돌아보기"
+      }
+    ]
   }
 ]
