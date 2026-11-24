@@ -351,7 +351,7 @@ if (classRoot) {
         <h2>${esc(p.title)}</h2>
         <button type="button" class="prompt-copy" data-copy>📋 프롬프트 복사하기</button>
       </div>
-      ${p.image ? `<div class="prompt-split">
+      ${p.image ? `<div class="prompt-split${p.imageWide ? ' wide' : ''}">
         <figure class="prompt-figure">
           <a href="${esc(p.image)}" target="_blank" rel="noopener"><img src="${esc(p.image)}" alt="${esc(p.title)} 결과물 예시"></a>
           <figcaption>결과물 예시 · 누르면 크게 보여요</figcaption>

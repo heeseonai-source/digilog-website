@@ -467,6 +467,10 @@ textarea{min-height:140px;resize:vertical}
 .prompt-main{display:grid;gap:16px;min-width:0}
 .prompt-figure{margin:0;position:sticky;top:96px}
 .prompt-figure img{display:block;width:100%;height:auto;max-height:calc(100vh - 150px);object-fit:contain;border-radius:var(--radius-sm);border:1px solid var(--line);background:#FAF8F5}
+/* 가로로 긴 결과물은 프롬프트 위에 넓게 */
+.prompt-split.wide{grid-template-columns:1fr}
+.prompt-split.wide .prompt-figure{position:static}
+.prompt-split.wide .prompt-figure img{max-height:none}
 .prompt-figure figcaption{margin-top:8px;font-size:13px;color:var(--muted);text-align:center}
 @media (max-width:760px){
   .prompt-split{grid-template-columns:1fr;gap:16px}
