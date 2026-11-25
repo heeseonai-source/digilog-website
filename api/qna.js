@@ -123,7 +123,11 @@ module.exports = async (req, res) => {
   if (!hook()) return send(res, 503, { error: 'not configured' });
   try {
     // 앱스 스크립트가 Q&A 기능으로 업데이트됐는지 먼저 확인 (예전 스크립트면 '문의' 탭에 빈 줄이 생기므로 막는다)
-    try { await list(); } catch { return send(res, 503, { error: '게시판을 준비하고 있어요. 잠시 후 다시 시도해 주세요.' }); }
+    // 시트가 잠깐 응답을 못 할 때가 있어 한 번 더 확인한다
+    try { await list(); } catch {
+      await new Promise(r => setTimeout(r, 800));
+      try { await list(); } catch { return send(res, 503, { error: '게시판을 준비하고 있어요. 잠시 후 다시 시도해 주세요.' }); }
+    }
     const r = await fetch(hook(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
