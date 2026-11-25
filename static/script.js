@@ -74,7 +74,7 @@ document.querySelectorAll('[data-blog-cards]').forEach(async box => {
   }
 });
 
-/* ---------- 현장 갤러리 (강의후기 페이지) — 사진 목록은 관리자 화면에서 관리 ---------- */
+/* ---------- 현장 갤러리 (프로젝트·이력 페이지) — 사진 목록은 관리자 화면에서 관리 ---------- */
 const galleryEl = document.getElementById('field-gallery');
 let GALLERY = [];
 try { GALLERY = JSON.parse(document.getElementById('gallery-data')?.textContent || '[]'); } catch {}
@@ -520,90 +520,169 @@ if (contactForm) {
   }
 })();
 
-/* ---------- 수강생 후기: 메모 보드 (/api/reviews) ---------- */
+/* ---------- Q&A 게시판 (/api/qna) ---------- */
 (() => {
-  const board = document.getElementById('memo-board');
-  const form = document.getElementById('review-form');
-  if (!board) return;
-  const status = document.getElementById('memo-status');
-  const empty = document.getElementById('memo-empty');
+  const list = document.getElementById('qna-list');
+  if (!list) return;
+  const status = document.getElementById('qna-status');
+  const empty = document.getElementById('qna-empty');
+  const countEl = document.getElementById('qna-count');
   const filterBtns = document.querySelectorAll('.review-filter [data-cls]');
-  const PAGE = 24;
+  const PAGE = 10;
+  const opened = new Map(); // 이번 방문에서 비밀번호로 연(또는 직접 올린) 비공개 글
   let all = [], cls = '', shown = PAGE;
 
-  const memo = (r, isNew) => {
-    const li = document.createElement('li');
-    li.className = 'memo' + (isNew ? ' new' : '');
-    const p = document.createElement('p'); p.textContent = r.text;
-    const f = document.createElement('footer');
-    const b = document.createElement('b'); b.textContent = r.name || '수강생';
-    f.append(b, document.createElement('br'), `${r.cls}${r.date ? ' · ' + r.date : ''}`);
-    li.append(p, f);
-    return li;
-  };
-  const render = newOne => {
-    // 메모가 있는 수업만 거르기 버튼으로 보여 준다
-    filterBtns.forEach(b => { b.hidden = !!b.dataset.cls && !all.some(r => r.cls === b.dataset.cls); });
-    const list = cls ? all.filter(r => r.cls === cls) : all;
-    board.replaceChildren(...list.slice(0, shown).map(r => memo(r, r === newOne)));
-    empty.hidden = list.length > 0;
-    document.getElementById('memo-more')?.remove();
-    if (list.length > shown) {
-      const more = document.createElement('button');
-      more.type = 'button'; more.id = 'memo-more'; more.className = 'memo-more pager-more';
-      more.textContent = `메모 더 보기 (${list.length - shown}개)`;
-      more.addEventListener('click', () => { shown += PAGE; render(); });
-      board.after(more);
+  const el = (tag, className, text) => { const e = document.createElement(tag); if (className) e.className = className; if (text != null) e.textContent = text; return e; };
+  const para = text => el('p', 'qna-text', text);
+
+  // 펼친 내용: 질문 + 답변 (비공개 글이면 비밀번호 칸)
+  function bodyOf(item) {
+    const box = el('div', 'qna-body');
+    const full = item.private ? opened.get(item.id) : item;
+    if (!full) {
+      const f = el('form', 'qna-unlock');
+      const id = 'pw-' + item.id;
+      const label = el('label', '', '🔒 비공개 질문이에요. 질문할 때 정한 비밀번호를 입력해 주세요.');
+      label.htmlFor = id;
+      const rowEl = el('div', 'qna-unlock-row');
+      const input = el('input');
+      Object.assign(input, { id, type: 'password', autocomplete: 'current-password', maxLength: 20, required: true });
+      const btn = el('button', '', '열기');
+      btn.type = 'submit';
+      rowEl.append(input, btn);
+      const msg = el('p', 'form-msg');
+      msg.setAttribute('role', 'status');
+      f.append(label, rowEl, msg);
+      f.addEventListener('submit', async e => {
+        e.preventDefault();
+        btn.disabled = true; msg.className = 'form-msg'; msg.textContent = '확인하는 중이에요…';
+        try {
+          const r = await fetch('/api/qna', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'view', id: item.id, password: input.value }) });
+          const out = await r.json().catch(() => ({}));
+          if (!r.ok || !out.item) throw new Error(out.error || '열지 못했어요. 잠시 후 다시 시도해 주세요.');
+          opened.set(item.id, out.item);
+          const li = f.closest('.qna-item');
+          const fresh = row(item, true);
+          li.replaceWith(fresh);
+          fresh.querySelector('.qna-head')?.focus();
+        } catch (err) { msg.classList.add('error'); msg.textContent = err.message; btn.disabled = false; }
+      });
+      box.append(f);
+      return box;
     }
-  };
+    box.append(para(full.content));
+    const ans = el('div', 'qna-answer' + (full.answer ? '' : ' waiting'));
+    if (full.answer) ans.append(el('b', 'qna-answer-who', '디지로그쌤 답변'), para(full.answer));
+    else ans.append(el('span', '', '답변을 준비하고 있어요. 조금만 기다려 주세요!'));
+    box.append(ans);
+    return box;
+  }
+
+  function row(item, open) {
+    const li = el('li', 'qna-item' + (item.blind ? ' blind' : ''));
+    li.dataset.id = item.id;
+    if (item.blind) { li.append(el('div', 'qna-head', '관리자가 가린 글이에요.')); return li; }
+    const full = item.private ? opened.get(item.id) : item;
+    const head = el('button', 'qna-head');
+    head.type = 'button';
+    head.setAttribute('aria-expanded', String(!!open));
+    const badge = el('span', 'qna-badge' + (item.answered ? ' done' : ''), item.answered ? '답변 완료' : '답변 대기');
+    const title = el('span', 'qna-title', full ? full.title : '비공개 질문이에요');
+    if (item.private) title.prepend(el('span', 'qna-lock', '🔒 '));
+    const meta = el('span', 'qna-meta', [item.cls, item.name || '수강생', item.date].filter(Boolean).join(' · '));
+    const caret = el('span', 'qna-caret');
+    caret.setAttribute('aria-hidden', 'true');
+    head.append(badge, title, meta, caret);
+    const body = bodyOf(item);
+    body.hidden = !open;
+    li.append(head, body);
+    head.addEventListener('click', () => {
+      const now = head.getAttribute('aria-expanded') !== 'true';
+      head.setAttribute('aria-expanded', String(now));
+      body.hidden = !now;
+      if (now) body.querySelector('input')?.focus();
+    });
+    return li;
+  }
+
+  function render() {
+    filterBtns.forEach(b => { b.hidden = !!b.dataset.cls && !all.some(r => r.cls === b.dataset.cls); });
+    const items = cls ? all.filter(r => r.cls === cls) : all;
+    list.replaceChildren(...items.slice(0, shown).map(i => row(i, false)));
+    empty.hidden = items.length > 0;
+    countEl.textContent = all.length ? `${all.length}개` : '';
+    document.getElementById('qna-more')?.remove();
+    if (items.length > shown) {
+      const more = el('button', 'memo-more', `질문 더 보기 (${items.length - shown}개)`);
+      more.type = 'button'; more.id = 'qna-more';
+      more.addEventListener('click', () => { shown += PAGE; render(); });
+      list.after(more);
+    }
+  }
   filterBtns.forEach(btn => btn.addEventListener('click', () => {
     cls = btn.dataset.cls; shown = PAGE;
     filterBtns.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
     render();
   }));
 
-  fetch('/api/reviews').then(r => r.json()).then(d => {
-    all = d.reviews || [];
-    status.remove();
-    render();
-  }).catch(() => { status.textContent = '메모를 불러오지 못했어요. 잠시 후 새로고침해 주세요.'; });
+  fetch('/api/qna').then(r => r.json()).then(d => { all = d.items || []; status.remove(); render(); })
+    .catch(() => { status.textContent = '질문을 불러오지 못했어요. 잠시 후 새로고침해 주세요.'; });
 
+  /* ---------- 질문 쓰기 ---------- */
+  const form = document.getElementById('qna-form');
   if (!form) return;
-  const opened = Date.now();
-  // 수업 고르기: 누르면 펼쳐지고, 고르면 접히면서 고른 수업이 보인다
+  const formOpened = Date.now();
+  const write = document.getElementById('qna-write');
   const picker = form.querySelector('#class-picker');
   const picked = form.querySelector('#class-picked');
   form.querySelectorAll('input[name="cls"]').forEach(r => r.addEventListener('change', () => {
     picked.textContent = r.value; picker.classList.add('chosen'); picker.open = false;
     picker.querySelector('summary').focus();
   }));
-  const text = form.querySelector('#rv-text');
-  const count = form.querySelector('#rv-count');
-  const msg = form.querySelector('.form-msg');
+  const text = form.querySelector('#qa-content');
+  const count = form.querySelector('#qa-count');
   text.addEventListener('input', () => { count.textContent = text.value.length; });
+  const priv = form.querySelector('#qa-private');
+  const pwField = form.querySelector('#qa-pw-field');
+  priv.addEventListener('change', () => { pwField.hidden = !priv.checked; if (priv.checked) pwField.querySelector('input').focus(); });
+  const msg = form.querySelector('.form-msg');
+  const bad = (m, focusEl) => { msg.className = 'form-msg error'; msg.textContent = m; focusEl?.focus(); };
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const fd = new FormData(form);
-    const data = { cls: fd.get('cls') || '', text: String(fd.get('text') || '').trim(), name: String(fd.get('name') || '').trim(), website: fd.get('website') || '', t: opened };
-    msg.className = 'form-msg';
-    if (!data.cls) { msg.classList.add('error'); msg.textContent = '들으신 수업을 골라 주세요.'; picker.open = true; picker.querySelector('summary').focus(); return; }
-    if (data.text.length < 5) { msg.classList.add('error'); msg.textContent = '후기를 5자 이상 적어 주세요.'; text.focus(); return; }
+    const data = {
+      action: 'ask', cls: fd.get('cls') || '', title: String(fd.get('title') || '').trim(), content: String(fd.get('content') || '').trim(),
+      name: String(fd.get('name') || '').trim(), private: priv.checked, password: String(fd.get('password') || ''), website: fd.get('website') || '', t: formOpened,
+    };
+    if (!data.cls) { picker.open = true; return bad('들으신 수업을 골라 주세요.', picker.querySelector('summary')); }
+    if (data.title.length < 2) return bad('제목을 2자 이상 적어 주세요.', form.querySelector('#qa-title'));
+    if (data.content.length < 5) return bad('질문 내용을 5자 이상 적어 주세요.', text);
+    if (data.private && data.password.trim().length < 4) return bad('비밀번호를 4자 이상 정해 주세요.', form.querySelector('#qa-pw'));
     const btn = form.querySelector('button[type="submit"]');
-    btn.disabled = true; msg.textContent = '메모를 붙이는 중이에요…';
+    btn.disabled = true; msg.className = 'form-msg'; msg.textContent = '질문을 올리는 중이에요…';
     try {
-      const r = await fetch('/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const r = await fetch('/api/qna', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       const out = await r.json().catch(() => ({}));
-      if (!r.ok || !out.ok) throw new Error(out.error && !/^(sheet failed|not configured|bad request)$/.test(out.error) ? out.error : '저장하지 못했어요. 잠시 후 다시 시도해 주세요.');
-      const review = out.review || { ...data, name: data.name || '수강생' };
-      all.unshift(review);
+      if (!r.ok || !out.ok) throw new Error(out.error && !/^(sheet failed|not configured|bad request)$/.test(out.error) ? out.error : '올리지 못했어요. 잠시 후 다시 시도해 주세요.');
+      const item = out.item;
+      if (item.private) opened.set(item.id, item); // 방금 올린 비공개 글은 이번 방문 동안 바로 볼 수 있게
+      all.unshift(item);
       cls = ''; shown = PAGE;
       filterBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cls === '')));
-      render(review);
-      msg.classList.add('ok'); msg.textContent = form.dataset.success;
-      text.value = ''; count.textContent = '0';
-      board.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      render();
+      const first = row(item, true);
+      first.classList.add('new');
+      list.firstElementChild?.replaceWith(first);
+      msg.className = 'form-msg ok'; msg.textContent = form.dataset.success;
+      ['#qa-title', '#qa-content', '#qa-pw'].forEach(s => { form.querySelector(s).value = ''; });
+      count.textContent = '0';
+      setTimeout(() => {
+        write.open = false; msg.textContent = '';
+        list.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      }, 1500);
     } catch (err) {
-      msg.classList.add('error'); msg.textContent = err.message;
+      bad(err.message);
     } finally { btn.disabled = false; }
   });
 })();

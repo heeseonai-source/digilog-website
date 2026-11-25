@@ -15,7 +15,7 @@ const PAGES = {
   about: { path: 'content/about.json', label: '소개' },
   lectures: { path: 'content/lectures.json', label: '강의' },
   projects: { path: 'content/projects.json', label: '프로젝트·이력' },
-  reviews: { path: 'content/reviews.json', label: '강의후기·갤러리' },
+  qna: { path: 'content/qna.json', label: 'Q&A 게시판' },
   contact: { path: 'content/contact.json', label: '문의' },
   materials: { path: 'content/materials.json', label: '수업자료 페이지' },
   classes: { path: 'api/_data/materials.json', label: '수업자료 목록' },

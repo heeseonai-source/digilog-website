@@ -43,11 +43,11 @@ const SCHEMA = {
     G('stories', '현장별 이야기 (블로그 「출강후기」 글이 자동으로 카드가 돼요)', [T('title', '제목'), R('lead', '설명'), SEL('count', '보여줄 카드 수', [['6', '6개'], ['9', '9개'], ['12', '12개']])]),
     CTA,
   ] },
-  reviews: { label: '수강생 후기', view: '/reviews', notice: '수강생이 남긴 메모는 구글 시트 <b>「후기」 탭</b>에 쌓이고 바로 페이지에 보여요. 내리고 싶은 메모는 시트의 <b>숨기기</b> 칸에 아무 글자나 적으면 사라져요(1분쯤 걸려요).', fields: [
+  qna: { label: 'Q&A 게시판', view: '/qna', notice: '수강생 질문은 구글 시트 <b>「질문」 탭</b>에 쌓여요. <b>답변</b> 칸에 적으면 홈페이지에 답변이 달리고, <b>블라인드</b> 칸에 아무 글자나 적으면 「관리자가 가린 글」로 바뀌어요(1분쯤 걸려요). 비공개 질문의 내용도 시트에서 볼 수 있어요.', fields: [
     HERO,
-    L('classes', '후기 받을 수업 (수강생이 고르는 목록, 위에 있을수록 앞에 보여요)', [T('name', '수업 이름')], '수업'),
-    G('form', '메모 쓰기 칸', [T('title', '제목'), A('note', '안내 문구'), T('success', '남긴 뒤 보여줄 문구')]),
-    G('empty', '메모가 하나도 없을 때', [T('title', '제목'), A('text', '설명')]),
+    L('classes', '질문 받을 수업 (수강생이 고르는 목록, 위에 있을수록 앞에 보여요)', [T('name', '수업 이름')], '수업'),
+    G('form', '질문 쓰기 칸', [T('title', '버튼 이름'), A('note', '안내 문구'), T('success', '올린 뒤 보여줄 문구')]),
+    G('empty', '질문이 하나도 없을 때', [T('title', '제목'), A('text', '설명')]),
   ] },
   classes: { label: '수업자료 목록', view: '/materials', root: 'list', notice: '수업마다 비밀번호를 정해요. 비밀번호는 <b>새로 정하거나 바꿀 때만</b> 입력하세요. 비워 두면 기존 비밀번호가 유지돼요. 자료는 3MB 이하 파일을 올리거나, 구글 드라이브 공유 링크를 붙여 넣으세요.', fields: [
     T('title', '수업 이름 (수강생에게 보임)'),
@@ -63,7 +63,7 @@ const SCHEMA = {
     A('description', '사이트 소개 (검색 결과에 보이는 문장)'), IMG('shareImage', '공유 미리보기 이미지 (카톡 등)'),
   ] },
 };
-const MENU = [['페이지', ['home', 'about', 'lectures', 'projects', 'reviews', 'contact']], ['수업자료', ['classes', 'materials']], ['설정', ['site']]];
+const MENU = [['페이지', ['home', 'about', 'lectures', 'projects', 'qna', 'contact']], ['수업자료', ['classes', 'materials']], ['설정', ['site']]];
 
 /* ---------- 공통 ---------- */
 const $ = (s, el = document) => el.querySelector(s);

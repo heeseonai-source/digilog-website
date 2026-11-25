@@ -19,7 +19,7 @@ const linkAttrs = url => ext(url) ? ' target="_blank" rel="noopener"' : '';
 
 const NAV = [
   ['/', '홈', 'home'], ['/about', '소개', 'about'], ['/lectures', '강의', 'lectures'],
-  ['/projects', '프로젝트·이력', 'projects'], ['/reviews', '강의후기', 'reviews'], ['/materials', '수업자료', 'materials'],
+  ['/projects', '프로젝트·이력', 'projects'], ['/qna', 'Q&A', 'qna'], ['/materials', '수업자료', 'materials'],
 ];
 
 function layout(site, { key, title, description, body, noindex }) {
@@ -169,7 +169,7 @@ function about(a) {
     <span class="eyebrow">수업 철학</span>
     <p class="quote">${rich(a.quote)}</p>
     <div class="body">${paras(a.body).map(p => `<p>${rich(p)}</p>`).join('')}</div>
-    <div class="btn-row" style="margin-top:28px">${X.button({ label: '강의 문의하기', href: '/contact' })}${X.button({ label: '강의후기 보기', href: '/reviews', variant: 'secondary' })}</div>
+    <div class="btn-row" style="margin-top:28px">${X.button({ label: '강의 문의하기', href: '/contact' })}${X.button({ label: '궁금한 점 물어보기', href: '/qna', variant: 'secondary' })}</div>
   </div>
 </div></section>
 <section class="section alt"><div class="wrap grid grid-2">
@@ -243,15 +243,16 @@ ${p.history.items.map(it => { const [label, cls] = STATUS[it.status] || STATUS.d
 ${cta(p.cta, '/contact')}`;
 }
 
-// 수강생 후기: 왼쪽(휴대폰은 위) 메모 쓰기, 오른쪽 메모 보드. 메모 목록은 script.js가 /api/reviews 에서 불러온다
-function reviews(r) {
-  const classes = (r.classes || []).map(c => String(c.name || '').trim()).filter(Boolean);
-  const form = r.form || {};
-  return `${pageHero('강의후기', r.hero, 'cheer')}
-<section class="section review-section"><div class="wrap review-layout">
-  <aside class="review-write">
-    ${X.card(`<form id="review-form" novalidate data-success="${esc(form.success || '메모를 붙였어요. 고맙습니다!')}">
-      <h2>✏️ ${esc(form.title || '후기 메모 남기기')}</h2>
+// Q&A 게시판: 위에 '질문하기'(누르면 쓰기 칸이 펼쳐짐), 아래 질문 목록(누르면 내용·답변이 펼쳐짐)
+// 목록은 script.js가 /api/qna 에서 불러온다. 답변은 구글 시트 '질문' 탭의 답변 칸에서 단다.
+function qna(q) {
+  const classes = (q.classes || []).map(c => String(c.name || '').trim()).filter(Boolean);
+  const form = q.form || {};
+  return `${pageHero('Q&A', q.hero, 'think')}
+<section class="section qna-section"><div class="wrap">
+  <details class="qna-write" id="qna-write">
+    <summary class="qna-write-btn"><span aria-hidden="true">✏️</span> ${esc(form.title || '질문하기')}</summary>
+    ${X.card(`<form id="qna-form" novalidate data-success="${esc(form.success || '질문을 올렸어요.')}">
       <fieldset class="class-pick">
         <legend>어떤 수업을 들으셨나요? <span class="req">*</span></legend>
         <details class="class-picker" id="class-picker">
@@ -261,25 +262,31 @@ ${classes.map((c, i) => `            <label class="class-option"><input type="ra
           </div>
         </details>
       </fieldset>
-      <div class="field"><label for="rv-text">한 줄 후기 <span class="req">*</span></label>
-        <textarea id="rv-text" name="text" maxlength="150" rows="4" required placeholder="예: 챗GPT로 안내문 만드는 법을 바로 써먹었어요!"></textarea>
-        <span class="hint"><span id="rv-count">0</span>/150자</span></div>
-      <div class="field"><label for="rv-name">닉네임 <small>(선택)</small></label>
-        <input id="rv-name" name="name" maxlength="12" autocomplete="off" placeholder="비워 두면 '수강생'으로 보여요"></div>
+      <div class="field"><label for="qa-title">제목 <span class="req">*</span></label>
+        <input id="qa-title" name="title" maxlength="60" required autocomplete="off" placeholder="예: 챗GPT에 사진을 올리는 방법이 궁금해요"></div>
+      <div class="field"><label for="qa-content">질문 내용 <span class="req">*</span></label>
+        <textarea id="qa-content" name="content" maxlength="1000" rows="6" required placeholder="어떤 걸 하다가, 어디에서 막혔는지 적어 주시면 더 정확하게 답해 드릴 수 있어요."></textarea>
+        <span class="hint"><span id="qa-count">0</span>/1000자</span></div>
+      <div class="field"><label for="qa-name">닉네임 <small>(선택)</small></label>
+        <input id="qa-name" name="name" maxlength="12" autocomplete="off" placeholder="비워 두면 '수강생'으로 보여요"></div>
+      <label class="check qna-private"><input type="checkbox" name="private" id="qa-private"> <span><b>🔒 비공개로 질문하기</b><br><small>나와 디지로그쌤만 볼 수 있어요. 비밀번호로 답변을 확인해요.</small></span></label>
+      <div class="field" id="qa-pw-field" hidden><label for="qa-pw">비밀번호 (4~20자) <span class="req">*</span></label>
+        <input id="qa-pw" name="password" type="password" minlength="4" maxlength="20" autocomplete="new-password" placeholder="답변을 볼 때 필요해요. 꼭 기억해 주세요"></div>
       <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <p class="review-note">${esc(form.note || '')}</p>
-      ${X.button({ label: '메모 붙이기', type: 'submit', width: '100%' })}
+      ${X.button({ label: '질문 올리기', type: 'submit', width: '100%' })}
       <p class="form-msg" role="status" aria-live="polite"></p>
-    </form>`, { className: 'review-form-card' })}
-  </aside>
-  <div class="review-board-wrap">
+    </form>`, { className: 'qna-form-card' })}
+  </details>
+  <div class="qna-board">
+    <div class="qna-board-head"><h2>질문 게시판 <span class="qna-count" id="qna-count"></span></h2></div>
     <div class="filter review-filter" role="group" aria-label="수업별로 보기">
       <button type="button" aria-pressed="true" data-cls="">전체</button>
-${classes.map(c => `      <button type="button" aria-pressed="false" data-cls="${esc(c)}">${esc(c)}</button>`).join('\n')}
+${classes.map(c => `      <button type="button" aria-pressed="false" data-cls="${esc(c)}" hidden>${esc(c)}</button>`).join('\n')}
     </div>
-    <ul class="memo-board" id="memo-board" aria-live="polite"></ul>
-    <p class="blog-status" id="memo-status">메모를 불러오는 중이에요…</p>
-    <div class="memo-empty" id="memo-empty" hidden><b>${rich(r.empty.title)}</b><span>${rich(r.empty.text)}</span></div>
+    <ul class="qna-list" id="qna-list"></ul>
+    <p class="blog-status" id="qna-status">질문을 불러오는 중이에요…</p>
+    <div class="memo-empty" id="qna-empty" hidden><b>${rich(q.empty.title)}</b><span>${rich(q.empty.text)}</span></div>
   </div>
 </div></section>`;
 }
@@ -365,7 +372,7 @@ function copyDir(src, dst) {
 
 function build({ clean = true } = {}) {
   const site = read('site'), h = read('home'), a = read('about'), l = read('lectures'),
-    p = read('projects'), r = read('reviews'), c = read('contact'), m = read('materials');
+    p = read('projects'), q = read('qna'), c = read('contact'), m = read('materials');
   if (clean) fs.rmSync(OUT, { recursive: true, force: true });
   copyDir(path.join(ROOT, 'static'), OUT);
   X.copyCss(OUT);
@@ -374,7 +381,7 @@ function build({ clean = true } = {}) {
     about: layout(site, { key: 'about', title: '소개', description: `${site.role} ${site.person}(${site.name})의 경력, 자격, 수업 철학.`, body: about(a) }),
     lectures: layout(site, { key: 'lectures', title: '강의 분야', description: l.courses.map(x => x.title).join(', ') + '. 대상별 맞춤 AI 실습 강의.', body: lectures(l) }),
     projects: layout(site, { key: 'projects', title: '프로젝트·출강 이력', description: '생성형 AI 강의 현장 사진, 출강 이력과 강의 현장 이야기.', body: projects(p) }),
-    reviews: layout(site, { key: 'reviews', title: '수강생 후기', description: plain(r.hero.lead), body: reviews(r) }),
+    qna: layout(site, { key: 'qna', title: 'Q&A 질문 게시판', description: plain(q.hero.lead), body: qna(q) }),
     materials: layout(site, { key: 'materials', title: '수업자료실', description: '수강생을 위한 자료실. 수업에서 안내받은 비밀번호로 자료를 받을 수 있습니다.', body: materials(m), noindex: true }),
     contact: layout(site, { key: 'contact', title: '강의 문의', description: '기관·단체 생성형 AI 강의, 연수, 멘토링, 콘텐츠 협업 문의.', body: contact(site, c) }),
   };
